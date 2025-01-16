@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "target": "es2017", // Use a more modern target; ES2017 is compatible with Node.js 14+ and improves performance.
+    "lib": ["es2017"], // Aligns with `target`; `esnext` is unnecessary if you're targeting ES2017 or below.
+    "module": "commonjs", // Keep CommonJS for Node.js compatibility.
+    "moduleResolution": "node", // Necessary for resolving Node.js modules.
+    "allowJs": false, // Disable JS if you're focused on a TypeScript-only codebase for stricter typing.
+    "strict": false, // Enables strict mode for better type safety and compatibility with other libs.
+    "esModuleInterop": true, // Ensures compatibility with both ES modules and CommonJS.
+    "forceConsistentCasingInFileNames": true, // Prevents case-sensitive import issues, especially on case-sensitive filesystems.
+    "resolveJsonModule": true, // Required for importing JSON files directly.
+    "isolatedModules": true, // Useful for enforcing isolated transpilation (especially for tools like Babel or SWC).
+    "incremental": true, // Speeds up builds by using incremental compilation.
+    "declaration": true, // Generate type declarations for consumers of the library.
+    "declarationMap": true, // Include source maps for declarations for easier debugging.
+    "baseUrl": ".", // Relative imports based on the project root.
+    "outDir": "dist", // Output directory for compiled files.
+    "paths": {}, // Can be populated later if aliasing is needed.
+    "typeRoots": ["./node_modules/@types", "./node_modules/@figma"], // Ensure Figma plugin types are included.
+    "skipLibCheck": true, // Avoid checking type definitions in dependencies to speed up builds.
+    "noEmitOnError": true, // Prevent emitting files if there are TypeScript errors.
+    "useUnknownInCatchVariables": true, // Improves type safety for `catch` blocks.
+    "noImplicitOverride": true, // Helps ensure that overridden methods are explicitly marked.
+    "noUncheckedIndexedAccess": true, // Makes indexing operations safer by accounting for `undefined`.
+    "allowSyntheticDefaultImports": true // Helps with ESM interop when `esModuleInterop` is enabled.
+  },
+  "include": ["src"], // Include files in the `src` directory.
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"], // Exclude unnecessary files and tests.
+  "compileOnSave": false // Optional: Disable live compilation to reduce unnecessary overhead.
+}
