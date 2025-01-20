@@ -1,10 +1,10 @@
 import {
-  ColorObject,
-  EffectObject,
-  FileComponentObject,
+  IColorObject,
+  IEffectObject,
+  IFileComponentObject,
   IIntegrationComponentOptions,
   ITransformer,
-  TypographyObject,
+  ITypographyObject,
 } from "../../../types";
 import {
   formatComponentCodeBlockComment,
@@ -16,7 +16,7 @@ import { transformComponentInstance } from "../../../transformer";
 export function ScssTransformer(): ITransformer {
   const component = (
     _: string,
-    component: FileComponentObject,
+    component: IFileComponentObject,
     options?: IIntegrationComponentOptions
   ) => {
     let result: string | null = null;
@@ -40,7 +40,7 @@ export function ScssTransformer(): ITransformer {
     return result ?? "";
   };
 
-  const colors = (colors: ColorObject[]) => {
+  const colors = (colors: IColorObject[]) => {
     const stringBuilder: Array<string> = [];
 
     colors.forEach((color) => {
@@ -52,7 +52,7 @@ export function ScssTransformer(): ITransformer {
     return stringBuilder.join("\n");
   };
 
-  const effects = (effects: EffectObject[]) => {
+  const effects = (effects: IEffectObject[]) => {
     const stringBuilder: Array<string> = [];
 
     const validEffects = effects?.filter(
@@ -72,7 +72,7 @@ export function ScssTransformer(): ITransformer {
     return stringBuilder.join("\n");
   };
 
-  const types = (types: TypographyObject[]) => {
+  const types = (types: ITypographyObject[]) => {
     const stringBuilder: Array<string> = [];
 
     types.forEach((type) => {

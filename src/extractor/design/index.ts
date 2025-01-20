@@ -7,21 +7,21 @@ import {
   transformFigmaFillsToCssColor,
 } from "../../utils";
 import {
-  ColorObject,
-  DocumentationObject,
-  EffectObject,
+  IColorObject,
+  IDocumentationObject,
+  IEffectObject,
   LocalStyleNode,
   ReferenceObject,
-  TypographyObject,
+  ITypographyObject,
 } from "../../types";
 import { resolvePaint } from "../utils";
 import { DesignMap, NodeStyleMap } from "../types";
 
 export default function extract(styles: LocalStyleNode[]): {
-  data: DocumentationObject["design"];
+  data: IDocumentationObject["design"];
   map: DesignMap;
 } {
-  const data: DocumentationObject["design"] = {
+  const data: IDocumentationObject["design"] = {
     color: [],
     effect: [],
     typography: [],
@@ -192,10 +192,10 @@ export default function extract(styles: LocalStyleNode[]): {
   };
 }
 
-function extractMap(localStylesData: DocumentationObject["design"]) {
+function extractMap(localStylesData: IDocumentationObject["design"]) {
   return {
     colors: localStylesData.color.reduce(
-      (acc: NodeStyleMap, color: ColorObject) => {
+      (acc: NodeStyleMap, color: IColorObject) => {
         acc[color.id] = {
           reference: color.reference,
           type: "color",
@@ -208,7 +208,7 @@ function extractMap(localStylesData: DocumentationObject["design"]) {
       {}
     ),
     effects: localStylesData.effect.reduce(
-      (acc: NodeStyleMap, effect: EffectObject) => {
+      (acc: NodeStyleMap, effect: IEffectObject) => {
         acc[effect.id] = {
           reference: effect.reference,
           group: effect.group,
@@ -220,7 +220,7 @@ function extractMap(localStylesData: DocumentationObject["design"]) {
       {}
     ),
     typography: localStylesData.typography.reduce(
-      (acc: NodeStyleMap, typo: TypographyObject) => {
+      (acc: NodeStyleMap, typo: ITypographyObject) => {
         acc[typo.id] = {
           reference: typo.reference,
           type: "typography",

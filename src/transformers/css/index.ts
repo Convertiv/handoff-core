@@ -1,10 +1,10 @@
 import {
-  ColorObject,
-  EffectObject,
-  FileComponentObject,
+  IColorObject,
+  IEffectObject,
+  IFileComponentObject,
   IIntegrationComponentOptions,
   ITransformer,
-  TypographyObject,
+  ITypographyObject,
 } from "../../types";
 import {
   formatComponentCodeBlockComment,
@@ -16,7 +16,7 @@ import { transformComponentInstance } from "../../transformer";
 export function CssTransformer(): ITransformer {
   const component = (
     id: string,
-    component: FileComponentObject,
+    component: IFileComponentObject,
     options?: IIntegrationComponentOptions
   ) => {
     const lines = [];
@@ -39,7 +39,7 @@ export function CssTransformer(): ITransformer {
     return lines.concat(cssVars).join("\n\n") + "\n}\n";
   };
 
-  const colors = (colors: ColorObject[]) => {
+  const colors = (colors: IColorObject[]) => {
     const stringBuilder: Array<string> = [];
 
     colors.forEach((color) => {
@@ -51,7 +51,7 @@ export function CssTransformer(): ITransformer {
     return `:root {\n${stringBuilder.join("\n")}\n}\n`;
   };
 
-  const effects = (effects: EffectObject[]) => {
+  const effects = (effects: IEffectObject[]) => {
     const stringBuilder: Array<string> = [];
 
     const validEffects = effects?.filter(
@@ -71,7 +71,7 @@ export function CssTransformer(): ITransformer {
     return `:root {\n${stringBuilder.join("\n")}\n}\n`;
   };
 
-  const types = (types: TypographyObject[]) => {
+  const types = (types: ITypographyObject[]) => {
     const stringBuilder: Array<string> = [];
 
     types.forEach((type) => {

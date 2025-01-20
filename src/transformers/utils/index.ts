@@ -1,5 +1,5 @@
 import { toSDMachineName } from "../../utils";
-import { ComponentInstance, IToken, TypographyObject } from "../../types";
+import { IComponentInstance, IToken, ITypographyObject } from "../../types";
 
 /**
  * Capitalizes the first letter of the input string and converts the rest of the string to lowercase.
@@ -106,7 +106,7 @@ export const tokenReferenceFormat = (
 };
 
 export const formatComponentCodeBlockComment = (
-  component: ComponentInstance,
+  component: IComponentInstance,
   format: "/**/" | "//"
 ): string => {
   const parts = [capitalize(component.name)];
@@ -120,5 +120,5 @@ export const formatComponentCodeBlockComment = (
   return format === "/**/" ? `/* ${str} */` : `// ${str}`;
 };
 
-export const formatTypeName = (type: TypographyObject) =>
+export const formatTypeName = (type: ITypographyObject) =>
   type.group ? `${type.group}-${type.machine_name}` : `${type.machine_name}`;

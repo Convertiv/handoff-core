@@ -12,7 +12,7 @@ import {
 } from "./utils";
 
 type ExportPipeComponentInstance = Omit<
-  ExportTypes.ComponentInstance,
+  ExportTypes.IComponentInstance,
   "variantProperties"
 > & { variantProperties: Map<string, string> };
 
@@ -32,7 +32,7 @@ export default function extract(
   logger?: ExportTypes.ILogger
 ) {
   const componentTokens: {
-    [key: string]: ExportTypes.FileComponentObject;
+    [key: string]: ExportTypes.IFileComponentObject;
   } = {};
 
   for (const componentSet of componentSets) {
@@ -75,7 +75,7 @@ function extractComponentInstances(
   integrationObject?: ExportTypes.IIntegration,
   designMap?: DesignMap,
   logger?: ExportTypes.ILogger
-): ExportTypes.ComponentInstance[] {
+): ExportTypes.IComponentInstance[] {
   const options = definition.options;
   const sharedComponentVariantIds =
     options.exporter.sharedComponentVariants ?? [];
@@ -250,7 +250,7 @@ function extractComponentInstances(
         parts: component.parts,
       })),
     ];
-  }, [] as ExportTypes.ComponentInstance[]);
+  }, [] as ExportTypes.IComponentInstance[]);
 
   return uniqBy(instances, "id");
 }

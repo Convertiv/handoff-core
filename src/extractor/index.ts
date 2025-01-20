@@ -1,5 +1,5 @@
 import {
-  DocumentationObject,
+  IDocumentationObject,
   ILogger,
   IIntegration,
   IProvider,
@@ -13,7 +13,7 @@ export default async function extract(
   provider: IProvider,
   integration?: IIntegration,
   logger?: ILogger
-): Promise<DocumentationObject> {
+): Promise<IDocumentationObject> {
   const localStyles = provider.getLocalStyles
     ? await provider.getLocalStyles(logger)
     : [];

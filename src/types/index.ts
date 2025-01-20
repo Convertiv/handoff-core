@@ -1,8 +1,6 @@
 import * as FigmaTypes from "./figma";
 
-//#region DOCUMENTATION
-
-export interface ColorObject {
+export interface IColorObject {
   id: string;
   name: string;
   machineName: string;
@@ -14,7 +12,7 @@ export interface ColorObject {
   reference: string;
 }
 
-export interface TypographyObject {
+export interface ITypographyObject {
   id: string;
   name: string;
   machine_name: string;
@@ -24,7 +22,7 @@ export interface TypographyObject {
   reference: string;
 }
 
-export interface EffectObject {
+export interface IEffectObject {
   id: string;
   name: string;
   machineName: string;
@@ -37,19 +35,7 @@ export interface EffectObject {
   reference: string;
 }
 
-export interface ComponentInstance {
-  id: string;
-  name: string;
-  description?: string;
-  variantProperties: [string, string][];
-  parts?: { [key: string]: TokenSets };
-}
-
-export interface FileComponentObject {
-  instances: ComponentInstance[];
-}
-
-export interface AssetObject {
+export interface IAssetObject {
   path: string;
   name: string;
   icon: string;
@@ -59,25 +45,166 @@ export interface AssetObject {
   description?: string;
 }
 
-export interface DocumentationObject {
+export interface IComponentInstance {
+  id: string;
+  name: string;
+  description?: string;
+  variantProperties: [string, string][];
+  parts?: { [key: string]: TokenSets };
+}
+
+export interface IFileComponentObject {
+  instances: IComponentInstance[];
+}
+
+export interface IDocumentationObject {
   timestamp?: string;
   design?: {
-    color?: ColorObject[];
-    typography?: TypographyObject[];
-    effect?: EffectObject[];
+    color?: IColorObject[];
+    typography?: ITypographyObject[];
+    effect?: IEffectObject[];
   };
   components?: {
-    [key: string]: FileComponentObject;
+    [key: string]: IFileComponentObject;
   };
   assets?: {
-    icons: AssetObject[];
-    logos: AssetObject[];
+    icons: IAssetObject[];
+    logos: IAssetObject[];
   };
 }
 
-//#endregion
+export interface ILogger {
+  log: (msg: string) => void;
+  err: (msg: string) => void;
+  warn: (msg: string) => void;
+  success: (msg: string) => void;
+}
 
-//#region INTERNAL
+export interface IIntegrationComponentOptions {
+  cssRootClass?: string;
+  tokenNameSegments?: string[];
+  defaults: {
+    [variantProperty: string]: string;
+  };
+  replace: { [variantProperty: string]: { [source: string]: string } };
+}
+
+export interface IIntegration {
+  name: string;
+  entries?: {
+    integration?: string;
+    templates?: string;
+    bundle?: string;
+  };
+  options: {
+    [key: string]: IIntegrationComponentOptions;
+  };
+}
+
+export interface IProvider {
+  getLocalStyles?: (logger?: ILogger) => Promise<LocalStyleNode[]>;
+  getAssets?: (
+    component: string,
+    logger?: ILogger
+  ) => Promise<
+    { name: string; description: string; data: string; extension: string }[]
+  >;
+  getComponents?: (logger?: ILogger) => Promise<
+    {
+      name: string;
+      componentSetNode: FigmaTypes.ComponentSet | ComponentSetNode;
+      componentsMetadata: Map<string, FigmaTypes.ComponentMetadata>;
+      definition: IComponentDefinition;
+    }[]
+  >;
+}
+
+export interface ITransformer {
+  component?: (
+    id: string,
+    component: IFileComponentObject,
+    options?: IIntegrationComponentOptions
+  ) => string;
+  colors?: (colors: IColorObject[]) => string;
+  effects?: (effects: IEffectObject[]) => string;
+  types?: (types: ITypographyObject[]) => string;
+}
+
+export interface ITransformerResult {
+  components: Record<string, string>;
+  design: Record<"colors" | "typography" | "effects", string>;
+}
+
+export interface IComponentDefinition {
+  id: string;
+  name: string;
+  group?: string;
+  parts: IComponentPart[];
+  options?: IComponentDefinitionOptions;
+}
+
+export interface IComponentPart {
+  id: string;
+  tokens: { from: string; export: Exportable[] }[];
+  condition?: string[][];
+}
+
+export interface IComponentDefinitionOptions {
+  exporter?: {
+    variantProperties: string[];
+    sharedComponentVariants?: {
+      componentId: string;
+      sharedVariantProperty?: string;
+      distinctiveVariantProperties?: string[];
+    }[];
+  };
+}
+
+export interface ILegacyComponentDefinition {
+  id: string;
+  group?: string;
+  options?: ILegacyComponentDefinitionOptions;
+  parts: IComponentPart[];
+}
+
+export interface ILegacyComponentDefinitionOptions {
+  exporter?: {
+    search: string;
+    supportedVariantProps: {
+      design: string[];
+      layout: string[];
+    };
+  };
+}
+
+export interface IToken {
+  name: string;
+  value: string;
+  metadata: {
+    part: string;
+    cssProperty: string;
+    reference?: ReferenceObject;
+    isSupportedCssProperty: boolean;
+    nameSegments: string[];
+  };
+}
+
+export type Exportable =
+  | "BACKGROUND"
+  | "BORDER"
+  | "SPACING"
+  | "TYPOGRAPHY"
+  | "FILL"
+  | "EFFECT"
+  | "OPACITY"
+  | "SIZE";
+
+export type LocalStyleNode =
+  | TextStyle
+  | PaintStyle
+  | EffectStyle
+  | FigmaTypes.Text
+  | FigmaTypes.Rectangle;
 
 export interface ReferenceObject {
   reference: string;
@@ -155,148 +282,3 @@ export type TokenSet =
   | SizeTokenSet;
 
 export type TokenSets = TokenSet[];
-
-//#endregion
-
-//#region API
-
-export interface ILogger {
-  log: (msg: string) => void;
-  err: (msg: string) => void;
-  warn: (msg: string) => void;
-  success: (msg: string) => void;
-}
-
-export interface IIntegrationComponentOptions {
-  cssRootClass?: string;
-  tokenNameSegments?: string[];
-  defaults: {
-    [variantProperty: string]: string;
-  };
-  replace: { [variantProperty: string]: { [source: string]: string } };
-}
-
-export interface IIntegration {
-  name: string;
-  entries?: {
-    integration?: string;
-    templates?: string;
-    bundle?: string;
-  };
-  options: {
-    [key: string]: IIntegrationComponentOptions;
-  };
-}
-
-export interface IProvider {
-  getLocalStyles?: (logger?: ILogger) => Promise<LocalStyleNode[]>;
-  getAssets?: (
-    component: string,
-    logger?: ILogger
-  ) => Promise<
-    { name: string; description: string; data: string; extension: string }[]
-  >;
-  getComponents?: (logger?: ILogger) => Promise<
-    {
-      name: string;
-      componentSetNode: FigmaTypes.ComponentSet | ComponentSetNode;
-      componentsMetadata: Map<string, FigmaTypes.ComponentMetadata>;
-      definition: IComponentDefinition;
-    }[]
-  >;
-}
-
-export interface ITransformer {
-  component?: (
-    id: string,
-    component: FileComponentObject,
-    options?: IIntegrationComponentOptions
-  ) => string;
-  colors?: (colors: ColorObject[]) => string;
-  effects?: (effects: EffectObject[]) => string;
-  types?: (types: TypographyObject[]) => string;
-}
-
-export interface TransformerResult {
-  components: Record<string, string>;
-  design: Record<"colors" | "typography" | "effects", string>;
-}
-
-export interface IComponentDefinition {
-  id: string;
-  name: string;
-  group?: string;
-  parts: IComponentPart[];
-  options?: IComponentDefinitionOptions;
-}
-
-export interface IComponentPart {
-  id: string;
-  tokens: { from: string; export: Exportable[] }[];
-  condition?: string[][];
-}
-
-export interface IComponentDefinitionOptions {
-  exporter?: {
-    variantProperties: string[];
-    sharedComponentVariants?: {
-      componentId: string;
-      sharedVariantProperty?: string;
-      distinctiveVariantProperties?: string[];
-    }[];
-  };
-}
-
-/**
- * @deprecated Will be removed before 1.0.0 release.
- */
-export interface ILegacyComponentDefinition {
-  id: string;
-  group?: string;
-  options?: ILegacyComponentDefinitionOptions;
-  parts: IComponentPart[];
-}
-
-/**
- * @deprecated Will be removed before 1.0.0 release.
- */
-export interface ILegacyComponentDefinitionOptions {
-  exporter?: {
-    search: string;
-    supportedVariantProps: {
-      design: string[];
-      layout: string[];
-    };
-  };
-}
-
-export interface IToken {
-  name: string;
-  value: string;
-  metadata: {
-    part: string;
-    cssProperty: string;
-    reference?: ReferenceObject;
-    isSupportedCssProperty: boolean;
-    nameSegments: string[];
-  };
-}
-
-export type Exportable =
-  | "BACKGROUND"
-  | "BORDER"
-  | "SPACING"
-  | "TYPOGRAPHY"
-  | "FILL"
-  | "EFFECT"
-  | "OPACITY"
-  | "SIZE";
-
-export type LocalStyleNode =
-  | TextStyle
-  | PaintStyle
-  | EffectStyle
-  | FigmaTypes.Text
-  | FigmaTypes.Rectangle;
-
-//#endregion

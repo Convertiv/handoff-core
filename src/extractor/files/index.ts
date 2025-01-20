@@ -1,5 +1,5 @@
 import { slugify } from "../../utils";
-import { AssetObject } from "../../types";
+import { IAssetObject } from "../../types";
 
 export default function extract(
   files: {
@@ -8,7 +8,7 @@ export default function extract(
     data: string;
     extension: string;
   }[]
-): AssetObject[] {
+): IAssetObject[] {
   return files.map((asset) => {
     const assetName = slugify(asset.name ?? "");
     const filename = assetName + "." + asset.extension;

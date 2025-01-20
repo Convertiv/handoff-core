@@ -5,23 +5,23 @@ export * as Integration from "./integration";
 import extractComponents from "./extractor";
 import executeTransform from "./transformer";
 import {
-  DocumentationObject,
+  IDocumentationObject,
   ILogger,
   IIntegration,
   IProvider,
   ITransformer,
-  TransformerResult,
+  ITransformerResult,
 } from "./types";
 
 export function Handoff(integration?: IIntegration, logger?: ILogger) {
-  const extract = async (provider: IProvider): Promise<DocumentationObject> => {
+  const extract = async (provider: IProvider): Promise<IDocumentationObject> => {
     return extractComponents(provider, integration, logger);
   };
 
   const transform = (
     transformer: ITransformer,
-    documentationObject: DocumentationObject
-  ): TransformerResult => {
+    documentationObject: IDocumentationObject
+  ): ITransformerResult => {
     return executeTransform(transformer, documentationObject, integration);
   };
 

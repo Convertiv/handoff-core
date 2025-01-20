@@ -15,10 +15,10 @@ import {
 
 export default function transform(
   transformer: Types.ITransformer,
-  documentationObject: Types.DocumentationObject,
+  documentationObject: Types.IDocumentationObject,
   integration?: Types.IIntegration,
   logger?: Types.ILogger
-): Types.TransformerResult {
+): Types.ITransformerResult {
   const componentDict: Record<string, string> = {};
 
   if (documentationObject.components) {
@@ -57,7 +57,7 @@ export default function transform(
 
 export const transformComponentInstance = (
   tokenType: TransformerTypes.TokenType,
-  component: Types.ComponentInstance,
+  component: Types.IComponentInstance,
   options?: Types.IIntegrationComponentOptions
 ) => {
   let tokens: Types.IToken[] = [];
@@ -89,7 +89,7 @@ export const transformComponentInstance = (
 const transformComponentInstanceTokens = (
   tokens: TransformerTypes.TokenDict | undefined,
   tokenType: TransformerTypes.TokenType,
-  component: Types.ComponentInstance,
+  component: Types.IComponentInstance,
   part: string,
   options?: Types.IIntegrationComponentOptions,
   reference?: Types.ReferenceObject

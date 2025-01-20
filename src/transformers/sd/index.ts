@@ -1,10 +1,10 @@
 import {
-  ColorObject,
-  EffectObject,
-  FileComponentObject,
+  IColorObject,
+  IEffectObject,
+  IFileComponentObject,
   IIntegrationComponentOptions,
   ITransformer,
-  TypographyObject,
+  ITypographyObject,
 } from "../../types";
 import { formatTypeName, tokenReferenceFormat } from "../utils";
 import { transformComponentInstance } from "../../transformer";
@@ -12,7 +12,7 @@ import { transformComponentInstance } from "../../transformer";
 export function StyleDictionaryTransformer(): ITransformer {
   const component = (
     id: string,
-    component: FileComponentObject,
+    component: IFileComponentObject,
     options?: IIntegrationComponentOptions
   ) => {
     const sd = {} as any;
@@ -48,7 +48,7 @@ export function StyleDictionaryTransformer(): ITransformer {
     return JSON.stringify(sd, null, 2);
   };
 
-  const colors = (colors: ColorObject[]) => {
+  const colors = (colors: IColorObject[]) => {
     const sd = {} as any;
 
     colors.forEach((color) => {
@@ -61,7 +61,7 @@ export function StyleDictionaryTransformer(): ITransformer {
     return JSON.stringify({ color: sd }, null, 2);
   };
 
-  const effects = (effects: EffectObject[]) => {
+  const effects = (effects: IEffectObject[]) => {
     const sd = {} as any;
     const validEffects = effects?.filter(
       (effect) => effect.effects && effect.effects.length > 0
@@ -80,7 +80,7 @@ export function StyleDictionaryTransformer(): ITransformer {
     return JSON.stringify({ effect: sd }, null, 2);
   };
 
-  const types = (types: TypographyObject[]) => {
+  const types = (types: ITypographyObject[]) => {
     return JSON.stringify(
       {
         typography: types.reduce(

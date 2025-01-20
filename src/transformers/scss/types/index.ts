@@ -1,10 +1,10 @@
 import {
-  ColorObject,
-  EffectObject,
-  FileComponentObject,
+  IColorObject,
+  IEffectObject,
+  IFileComponentObject,
   IIntegrationComponentOptions,
   ITransformer,
-  TypographyObject,
+  ITypographyObject,
 } from "../../../types";
 import { formatTypeName } from "../../utils";
 import { processValueWithRules, slugify } from "../../../utils";
@@ -12,7 +12,7 @@ import { processValueWithRules, slugify } from "../../../utils";
 export function ScssTypesTransformer(): ITransformer {
   const component = (
     id: string,
-    component: FileComponentObject,
+    component: IFileComponentObject,
     options?: IIntegrationComponentOptions
   ) => {
     const result: { [variantProp: string]: Set<string> } = {};
@@ -40,7 +40,7 @@ export function ScssTypesTransformer(): ITransformer {
     );
   };
 
-  const colors = (colors: ColorObject[]) => {
+  const colors = (colors: IColorObject[]) => {
     const stringBuilder: Array<string> = [];
 
     stringBuilder.push(
@@ -58,7 +58,7 @@ export function ScssTypesTransformer(): ITransformer {
     return stringBuilder.join("\n");
   };
 
-  const effects = (effects: EffectObject[]) => {
+  const effects = (effects: IEffectObject[]) => {
     const stringBuilder: Array<string> = [];
 
     const validEffects = effects?.filter(
@@ -77,7 +77,7 @@ export function ScssTypesTransformer(): ITransformer {
     return stringBuilder.join("\n");
   };
 
-  const types = (types: TypographyObject[]) => {
+  const types = (types: ITypographyObject[]) => {
     const stringBuilder: Array<string> = [];
 
     stringBuilder.push(
