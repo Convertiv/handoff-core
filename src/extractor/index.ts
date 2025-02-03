@@ -58,7 +58,7 @@ export async function extractComponents(
   const components = provider.getComponents
     ? componentsExtractor(
         await provider.getComponents(logger),
-        localStyles.$map,
+        localStyles?.$map,
         configuration,
         logger
       )

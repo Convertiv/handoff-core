@@ -88,13 +88,8 @@ export interface IHandoffConfigurationComponentOptions {
 }
 
 export interface IHandoffConfiguration {
-  name: string;
-  entries?: {
-    integration?: string;
-    templates?: string;
-    bundle?: string;
-  };
-  options: {
+  name?: string;
+  options?: {
     [key: string]: IHandoffConfigurationComponentOptions;
   };
 }

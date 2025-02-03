@@ -1,8 +1,4 @@
-export * as Types from "./types";
-export * as Providers from "./providers";
-export * as Transformers from "./transformers";
-export * as Integration from "./integration";
-import * as Extractor from "./extractor";
+import * as extractor from "./extractor";
 import executeTransform from "./transformer";
 import {
   IDocumentationObject,
@@ -13,29 +9,71 @@ import {
   ITransformerResult,
   IAssetObject,
 } from "./types";
+import { toLowerCaseKeysAndValues } from "./utils";
+
+const normalizeConfiguration = (configuration?: IHandoffConfiguration) => {
+  const options = configuration?.options ?? {};
+
+  if (!options || !options["*"]) {
+    return configuration;
+  }
+
+  const wildcardOptions = options["*"];
+  const mergedOptions: IHandoffConfiguration["options"] = {};
+
+  for (const key of Object.keys(options)) {
+    // if (key === '*') continue;
+
+    const specificOptions = options[key];
+
+    mergedOptions[key] = {
+      cssRootClass:
+        specificOptions.cssRootClass || wildcardOptions.cssRootClass || null,
+      tokenNameSegments:
+        specificOptions.tokenNameSegments ||
+        wildcardOptions.tokenNameSegments ||
+        null,
+      defaults: toLowerCaseKeysAndValues({
+        ...wildcardOptions.defaults,
+        ...specificOptions.defaults,
+      }),
+      replace: toLowerCaseKeysAndValues({
+        ...wildcardOptions.replace,
+        ...specificOptions.replace,
+      }),
+    };
+  }
+
+  return {
+    ...configuration,
+    options: mergedOptions,
+  };
+};
 
 export function Handoff(
   provider: IHandoffProvider,
   configuration?: IHandoffConfiguration,
   logger?: ILogger
 ) {
+  const normalizedConfig = normalizeConfiguration(configuration);
+
   const extractAssets = async (name: string): Promise<IAssetObject[]> => {
-    return Extractor.extractAssets(provider, name, configuration, logger);
+    return extractor.extractAssets(provider, name, normalizedConfig, logger);
   };
 
   const extractLocalStyles = async (): Promise<
     IDocumentationObject["localStyles"]
   > => {
-    return Extractor.extractLocalStyles(provider, configuration, logger);
+    return extractor.extractLocalStyles(provider, normalizedConfig, logger);
   };
 
   const extractComponents = async (
     localStyles?: IDocumentationObject["localStyles"]
   ): Promise<IDocumentationObject["components"]> => {
-    return Extractor.extractComponents(
+    return extractor.extractComponents(
       provider,
       localStyles,
-      configuration,
+      normalizedConfig,
       logger
     );
   };
@@ -47,7 +85,7 @@ export function Handoff(
       "components" | "localStyles"
     >
   ): ITransformerResult => {
-    return executeTransform(transformer, documentationObject, configuration);
+    return executeTransform(transformer, documentationObject, normalizedConfig);
   };
 
   return {
@@ -57,3 +95,7 @@ export function Handoff(
     transform,
   };
 }
+
+export * as Types from "./types";
+export * as Providers from "./providers";
+export * as Transformers from "./transformers";
