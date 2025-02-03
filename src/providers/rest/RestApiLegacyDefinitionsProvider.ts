@@ -392,6 +392,7 @@ export function RestApiLegacyDefinitionsProvider(
         },
       },
       parts: legacyDefinition.parts,
+      legacyDefinitionOptions: legacyDefinition.options,
     };
   };
 

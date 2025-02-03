@@ -54,7 +54,6 @@ export default function extract(
       ...extractComponentInstances(
         components,
         componentSet.definition,
-        undefined,
         integrationObject,
         designMap,
         logger
@@ -71,7 +70,6 @@ function extractComponentInstances(
     metadata: FigmaTypes.ComponentMetadata;
   }[],
   definition: ExportTypes.IComponentDefinition,
-  legacyDefinition?: ExportTypes.ILegacyComponentDefinition,
   integrationObject?: ExportTypes.IIntegration,
   designMap?: DesignMap,
   logger?: ExportTypes.ILogger
@@ -95,13 +93,13 @@ function extractComponentInstances(
       let rootNode: FigmaTypes.Component | FigmaTypes.Instance | BaseNode =
         component.node;
 
-      if (legacyDefinition) {
+      if (definition.legacyDefinitionOptions) {
         let isLayoutComponent = false;
 
         if (
-          !!legacyDefinition?.options?.exporter?.supportedVariantProps?.layout
+          !!definition.legacyDefinitionOptions?.exporter?.supportedVariantProps?.layout
         ) {
-          legacyDefinition.options.exporter.supportedVariantProps.layout.forEach(
+          definition.legacyDefinitionOptions.exporter.supportedVariantProps.layout.forEach(
             (layoutVariantProp) => {
               if (
                 !isLayoutComponent &&

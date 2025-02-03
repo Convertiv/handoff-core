@@ -141,6 +141,7 @@ export interface IComponentDefinition {
   group?: string;
   parts: IComponentPart[];
   options?: IComponentDefinitionOptions;
+  legacyDefinitionOptions?: ILegacyComponentDefinitionOptions;
 }
 
 export interface IComponentPart {
