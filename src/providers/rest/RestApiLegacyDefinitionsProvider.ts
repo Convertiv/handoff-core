@@ -18,7 +18,7 @@ const defaultExtension: string = "svg";
 export function RestApiLegacyDefinitionsProvider(
   auth: { projectId: string; accessToken: string },
   legacyDefinitions: ExportTypes.ILegacyComponentDefinition[]
-): ExportTypes.IProvider {
+): ExportTypes.IHandoffProvider {
   const getLocalStyles = async (logger?: ExportTypes.ILogger) => {
     try {
       const apiResponse = await getFileStyles(auth.projectId, auth.accessToken);

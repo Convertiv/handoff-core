@@ -7,26 +7,26 @@ import executeTransform from "./transformer";
 import {
   IDocumentationObject,
   ILogger,
-  IIntegration,
-  IProvider,
-  ITransformer,
+  IHandoffConfiguration,
+  IHandoffProvider,
+  IHandoffTransformer,
   ITransformerResult,
   IAssetObject,
 } from "./types";
 
 export function Handoff(
-  provider: IProvider,
-  integration?: IIntegration,
+  provider: IHandoffProvider,
+  configuration?: IHandoffConfiguration,
   logger?: ILogger
 ) {
   const extractAssets = async (name: string): Promise<IAssetObject[]> => {
-    return Extractor.extractAssets(provider, name, integration, logger);
+    return Extractor.extractAssets(provider, name, configuration, logger);
   };
 
   const extractLocalStyles = async (): Promise<
     IDocumentationObject["localStyles"]
   > => {
-    return Extractor.extractLocalStyles(provider, integration, logger);
+    return Extractor.extractLocalStyles(provider, configuration, logger);
   };
 
   const extractComponents = async (
@@ -35,19 +35,19 @@ export function Handoff(
     return Extractor.extractComponents(
       provider,
       localStyles,
-      integration,
+      configuration,
       logger
     );
   };
 
   const transform = (
-    transformer: ITransformer,
+    transformer: IHandoffTransformer,
     documentationObject: Pick<
       IDocumentationObject,
       "components" | "localStyles"
     >
   ): ITransformerResult => {
-    return executeTransform(transformer, documentationObject, integration);
+    return executeTransform(transformer, documentationObject, configuration);
   };
 
   return {

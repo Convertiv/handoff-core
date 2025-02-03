@@ -19,7 +19,7 @@ const defaultExtension: string = "svg";
 export function RestApiProvider(auth: {
   projectId: string;
   accessToken: string;
-}): ExportTypes.IProvider {
+}): ExportTypes.IHandoffProvider {
   const getLocalStyles = async (logger?: ExportTypes.ILogger) => {
     try {
       const apiResponse = await getFileStyles(auth.projectId, auth.accessToken);

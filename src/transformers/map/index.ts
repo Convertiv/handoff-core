@@ -2,18 +2,18 @@ import {
   IColorObject,
   IEffectObject,
   IFileComponentObject,
-  IIntegrationComponentOptions,
-  ITransformer,
+  IHandoffConfigurationComponentOptions,
+  IHandoffTransformer,
   ITypographyObject,
 } from "../../types";
 import { formatTypeName } from "../utils";
 import { transformComponentInstance } from "../../transformer";
 
-export function MapTransformer(): ITransformer {
+export function MapTransformer(): IHandoffTransformer {
   const component = (
     _: string,
     component: IFileComponentObject,
-    options?: IIntegrationComponentOptions
+    options?: IHandoffConfigurationComponentOptions
   ) => {
     const map = {} as Record<string, string>;
 

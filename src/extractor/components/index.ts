@@ -26,8 +26,8 @@ export default function extract(
     componentsMetadata: Map<string, FigmaTypes.ComponentMetadata>;
     definition: ExportTypes.IComponentDefinition;
   }[],
-  integrationObject?: ExportTypes.IIntegration,
   designMap?: ExportTypes.DesignMap,
+  configuration?: ExportTypes.IHandoffConfiguration,
   logger?: ExportTypes.ILogger
 ) {
   const componentTokens: {
@@ -53,7 +53,7 @@ export default function extract(
       ...extractComponentInstances(
         components,
         componentSet.definition,
-        integrationObject,
+        configuration,
         designMap,
         logger
       ),
@@ -69,7 +69,7 @@ function extractComponentInstances(
     metadata: FigmaTypes.ComponentMetadata;
   }[],
   definition: ExportTypes.IComponentDefinition,
-  integrationObject?: ExportTypes.IIntegration,
+  configuration?: ExportTypes.IHandoffConfiguration,
   designMap?: ExportTypes.DesignMap,
   logger?: ExportTypes.ILogger
 ): ExportTypes.IComponentInstance[] {
@@ -174,7 +174,7 @@ function extractComponentInstances(
             instance.variantProperties.get(
               sharedInstanceDefinition.sharedVariantProperty
             ) !==
-            ((integrationObject?.options ?? {})[sharedInstance.name]
+            ((configuration?.options ?? {})[sharedInstance.name]
               ?.defaults ?? {})[
               sharedInstanceDefinition.sharedVariantProperty.toLowerCase()
             ] // TODO: Remove when shared variant functionality gets removed

@@ -6,7 +6,7 @@ import { IComponentSetMetadata } from "../rest/types";
 export function PluginProvider(
   node?: ComponentSetNode,
   metadata?: IComponentSetMetadata
-): ExportTypes.IProvider {
+): ExportTypes.IHandoffProvider {
   const getLocalStyles = async (_?: ExportTypes.ILogger) => {
     const [paintStyles, textStyles, effectStyles] = await Promise.all([
       figma.getLocalPaintStylesAsync(),

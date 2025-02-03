@@ -1,7 +1,7 @@
 import { toLowerCaseKeysAndValues } from "../utils";
-import { IIntegration } from "../types";
+import { IHandoffConfiguration } from "../types";
 
-export const init = (integrationObject: IIntegration) => {
+export const init = (integrationObject: IHandoffConfiguration) => {
   const options = integrationObject.options ?? {};
 
   if (!options || !options['*']) {
@@ -9,7 +9,7 @@ export const init = (integrationObject: IIntegration) => {
   }
 
   const wildcardOptions = options['*'];
-  const mergedOptions: IIntegration['options'] = {};
+  const mergedOptions: IHandoffConfiguration['options'] = {};
 
   for (const key of Object.keys(options)) {
     // if (key === '*') continue;

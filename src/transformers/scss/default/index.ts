@@ -2,8 +2,8 @@ import {
   IColorObject,
   IEffectObject,
   IFileComponentObject,
-  IIntegrationComponentOptions,
-  ITransformer,
+  IHandoffConfigurationComponentOptions,
+  IHandoffTransformer,
   ITypographyObject,
 } from "../../../types";
 import {
@@ -13,11 +13,11 @@ import {
 } from "../../utils";
 import { transformComponentInstance } from "../../../transformer";
 
-export function ScssTransformer(): ITransformer {
+export function ScssTransformer(): IHandoffTransformer {
   const component = (
     _: string,
     component: IFileComponentObject,
-    options?: IIntegrationComponentOptions
+    options?: IHandoffConfigurationComponentOptions
   ) => {
     let result: string | null = null;
 

@@ -2,8 +2,8 @@ import {
   IColorObject,
   IEffectObject,
   IFileComponentObject,
-  IIntegrationComponentOptions,
-  ITransformer,
+  IHandoffConfigurationComponentOptions,
+  IHandoffTransformer,
   ITypographyObject,
 } from "../../types";
 import {
@@ -13,11 +13,11 @@ import {
 } from "../utils";
 import { transformComponentInstance } from "../../transformer";
 
-export function CssTransformer(): ITransformer {
+export function CssTransformer(): IHandoffTransformer {
   const component = (
     id: string,
     component: IFileComponentObject,
-    options?: IIntegrationComponentOptions
+    options?: IHandoffConfigurationComponentOptions
   ) => {
     const lines = [];
     const componentCssClass = options?.cssRootClass ?? id;

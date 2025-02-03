@@ -78,7 +78,7 @@ export interface ILogger {
   success: (msg: string) => void;
 }
 
-export interface IIntegrationComponentOptions {
+export interface IHandoffConfigurationComponentOptions {
   cssRootClass?: string;
   tokenNameSegments?: string[];
   defaults: {
@@ -87,7 +87,7 @@ export interface IIntegrationComponentOptions {
   replace: { [variantProperty: string]: { [source: string]: string } };
 }
 
-export interface IIntegration {
+export interface IHandoffConfiguration {
   name: string;
   entries?: {
     integration?: string;
@@ -95,11 +95,11 @@ export interface IIntegration {
     bundle?: string;
   };
   options: {
-    [key: string]: IIntegrationComponentOptions;
+    [key: string]: IHandoffConfigurationComponentOptions;
   };
 }
 
-export interface IProvider {
+export interface IHandoffProvider {
   getLocalStyles?: (logger?: ILogger) => Promise<LocalStyleNode[]>;
   getAssets?: (
     component: string,
@@ -117,11 +117,11 @@ export interface IProvider {
   >;
 }
 
-export interface ITransformer {
+export interface IHandoffTransformer {
   component?: (
     id: string,
     component: IFileComponentObject,
-    options?: IIntegrationComponentOptions
+    options?: IHandoffConfigurationComponentOptions
   ) => string;
   colors?: (colors: IColorObject[]) => string;
   effects?: (effects: IEffectObject[]) => string;

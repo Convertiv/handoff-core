@@ -2,18 +2,18 @@ import {
   IColorObject,
   IEffectObject,
   IFileComponentObject,
-  IIntegrationComponentOptions,
-  ITransformer,
+  IHandoffConfigurationComponentOptions,
+  IHandoffTransformer,
   ITypographyObject,
 } from "../../../types";
 import { formatTypeName } from "../../utils";
 import { processValueWithRules, slugify } from "../../../utils";
 
-export function ScssTypesTransformer(): ITransformer {
+export function ScssTypesTransformer(): IHandoffTransformer {
   const component = (
     id: string,
     component: IFileComponentObject,
-    options?: IIntegrationComponentOptions
+    options?: IHandoffConfigurationComponentOptions
   ) => {
     const result: { [variantProp: string]: Set<string> } = {};
 

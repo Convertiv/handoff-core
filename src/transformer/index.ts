@@ -14,10 +14,10 @@ import {
 } from "../utils";
 
 export default function transform(
-  transformer: Types.ITransformer,
+  transformer: Types.IHandoffTransformer,
   documentationObject: Pick<Types.IDocumentationObject, "components" | "localStyles">,
-  integration?: Types.IIntegration,
-  logger?: Types.ILogger
+  configuration?: Types.IHandoffConfiguration,
+  _?: Types.ILogger
 ): Types.ITransformerResult {
   const componentDict: Record<string, string> = {};
 
@@ -30,7 +30,7 @@ export default function transform(
         componentDict[componentId] = transformer.component(
           componentId,
           documentationObject.components[componentId],
-          integration?.options[componentId] ?? integration?.options["*"]
+          configuration?.options[componentId] ?? configuration?.options["*"]
         );
       }
     }
@@ -58,7 +58,7 @@ export default function transform(
 export const transformComponentInstance = (
   tokenType: TransformerTypes.TokenType,
   component: Types.IComponentInstance,
-  options?: Types.IIntegrationComponentOptions
+  options?: Types.IHandoffConfigurationComponentOptions
 ) => {
   let tokens: Types.IToken[] = [];
 
@@ -91,7 +91,7 @@ const transformComponentInstanceTokens = (
   tokenType: TransformerTypes.TokenType,
   component: Types.IComponentInstance,
   part: string,
-  options?: Types.IIntegrationComponentOptions,
+  options?: Types.IHandoffConfigurationComponentOptions,
   reference?: Types.ReferenceObject
 ) => {
   return tokens
@@ -127,7 +127,7 @@ const getTokenNameSegments = (
   componentVariantProps: [string, string][],
   part: string,
   property: string,
-  options?: Types.IIntegrationComponentOptions
+  options?: Types.IHandoffConfigurationComponentOptions
 ) => {
   if (options?.tokenNameSegments) {
     return options.tokenNameSegments

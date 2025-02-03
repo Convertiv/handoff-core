@@ -1,8 +1,8 @@
 import {
   IDocumentationObject,
   ILogger,
-  IIntegration,
-  IProvider,
+  IHandoffConfiguration,
+  IHandoffProvider,
   IAssetObject,
 } from "../types";
 import { startCase } from "../utils";
@@ -11,9 +11,9 @@ import localStylesExtractor from "./design";
 import filesExtractor from "./files";
 
 export async function extractAssets(
-  provider: IProvider,
+  provider: IHandoffProvider,
   name: string,
-  _?: IIntegration,
+  _?: IHandoffConfiguration,
   logger?: ILogger
 ): Promise<IAssetObject[]> {
   const assets = provider.getAssets
@@ -26,8 +26,8 @@ export async function extractAssets(
 }
 
 export async function extractLocalStyles(
-  provider: IProvider,
-  _?: IIntegration,
+  provider: IHandoffProvider,
+  _?: IHandoffConfiguration,
   logger?: ILogger
 ): Promise<IDocumentationObject["localStyles"]> {
   const localStyles = provider.getLocalStyles
@@ -50,16 +50,16 @@ export async function extractLocalStyles(
 }
 
 export async function extractComponents(
-  provider: IProvider,
+  provider: IHandoffProvider,
   localStyles?: IDocumentationObject["localStyles"],
-  integration?: IIntegration,
+  configuration?: IHandoffConfiguration,
   logger?: ILogger
 ): Promise<IDocumentationObject["components"]> {
   const components = provider.getComponents
     ? componentsExtractor(
         await provider.getComponents(logger),
-        integration,
         localStyles.$map,
+        configuration,
         logger
       )
     : {};
@@ -81,69 +81,4 @@ export async function extractComponents(
   });
 
   return components;
-}
-
-export default async function extract(
-  provider: IProvider,
-  integration?: IIntegration,
-  logger?: ILogger
-): Promise<IDocumentationObject> {
-  const localStyles = provider.getLocalStyles
-    ? await provider.getLocalStyles(logger)
-    : [];
-
-  const design = localStyles
-    ? localStylesExtractor(localStyles)
-    : { $map: { colors: {}, effects: {}, typography: {} } };
-
-  const iconAssets = provider.getAssets
-    ? await provider.getAssets("Icons", logger)
-    : [];
-
-  const icons = iconAssets ? filesExtractor(iconAssets) : [];
-
-  logger?.success(`Icons exported: ${icons.length}`);
-
-  const logoAssets = provider.getAssets
-    ? await provider.getAssets("Logo", logger)
-    : [];
-
-  const logos = logoAssets ? filesExtractor(logoAssets) : [];
-
-  logger?.success(`Logo exported: ${logos.length}`);
-
-  const components = provider.getComponents
-    ? componentsExtractor(
-        await provider.getComponents(logger),
-        integration,
-        design.$map,
-        logger
-      )
-    : {};
-
-  Object.keys(components).map((component: string) => {
-    if (components[component].instances.length === 0) {
-      logger?.err(
-        `Skipping "${startCase(
-          component
-        )}". Reason: No matching component instances were found.`
-      );
-    } else {
-      logger?.success(
-        `${startCase(component)} exported: ${
-          components[component].instances.length
-        }`
-      );
-    }
-  });
-
-  return {
-    timestamp: new Date().toISOString(),
-    localStyles: design,
-    components,
-    assets: {
-      icons,
-      logos,
-    },
-  };
 }

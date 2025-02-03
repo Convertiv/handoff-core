@@ -2,18 +2,18 @@ import {
   IColorObject,
   IEffectObject,
   IFileComponentObject,
-  IIntegrationComponentOptions,
-  ITransformer,
+  IHandoffConfigurationComponentOptions,
+  IHandoffTransformer,
   ITypographyObject,
 } from "../../types";
 import { formatTypeName, tokenReferenceFormat } from "../utils";
 import { transformComponentInstance } from "../../transformer";
 
-export function StyleDictionaryTransformer(): ITransformer {
+export function StyleDictionaryTransformer(): IHandoffTransformer {
   const component = (
     id: string,
     component: IFileComponentObject,
-    options?: IIntegrationComponentOptions
+    options?: IHandoffConfigurationComponentOptions
   ) => {
     const sd = {} as any;
 
