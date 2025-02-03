@@ -13,25 +13,23 @@ import {
   LocalStyleNode,
   ReferenceObject,
   ITypographyObject,
+  NodeStyleMap,
 } from "../../types";
 import { resolvePaint } from "../utils";
-import { DesignMap, NodeStyleMap } from "../types";
 
-export default function extract(styles: LocalStyleNode[]): {
-  data: IDocumentationObject["design"];
-  map: DesignMap;
-} {
-  const data: IDocumentationObject["design"] = {
+export default function extract(styles: LocalStyleNode[]): IDocumentationObject["localStyles"] {
+  const result: IDocumentationObject["localStyles"] = {
     color: [],
     effect: [],
     typography: [],
+    $map: { colors: {}, effects: {}, typography: {} },
   };
 
   styles.forEach((style) => {
     if (style.type === "RECTANGLE") {
       let { name, machine_name, group, groupLabel } = fieldData(style.name);
       if (isArray(style.effects) && style.effects.length > 0) {
-        data.effect.push({
+        result.effect.push({
           id: style.id,
           reference: `effect-${group}-${machine_name}`,
           name,
@@ -56,7 +54,7 @@ export default function extract(styles: LocalStyleNode[]): {
           isValidGradientType(style.fills[0].type))
       ) {
         const color = transformFigmaFillsToCssColor(style.fills);
-        data.color.push({
+        result.color.push({
           id: style.id,
           name,
           group,
@@ -74,7 +72,7 @@ export default function extract(styles: LocalStyleNode[]): {
         (effect) => isValidEffectType(effect.type) && effect.visible
       );
 
-      data.effect.push({
+      result.effect.push({
         id: style.id,
         reference: `effect-${group}-${machine_name}`,
         name,
@@ -100,7 +98,7 @@ export default function extract(styles: LocalStyleNode[]): {
       const cssColors = transformFigmaFillsToCssColor(colors);
 
       if ("color" in cssColors) {
-        data.color.push({
+        result.color.push({
           id: style.id,
           name,
           machineName: machine_name,
@@ -138,7 +136,7 @@ export default function extract(styles: LocalStyleNode[]): {
             ? `${(style.letterSpacing.value / 100) * style.fontSize}`
             : `${style.letterSpacing.value}`;
 
-        data.typography.push({
+        result.typography.push({
           id: style.id,
           reference: `typography-${group}-${machine_name}`,
           name,
@@ -169,7 +167,7 @@ export default function extract(styles: LocalStyleNode[]): {
         ) {
           color = transformFigmaColorToHex(style.fills[0].color);
         }
-        data.typography.push({
+        result.typography.push({
           id: style.id,
           reference: `typography-${group}-${machine_name}`,
           name: style.name,
@@ -186,13 +184,12 @@ export default function extract(styles: LocalStyleNode[]): {
     }
   });
 
-  return {
-    data,
-    map: extractMap(data),
-  };
+  result.$map = extractMap(result);
+
+  return result;
 }
 
-function extractMap(localStylesData: IDocumentationObject["design"]) {
+function extractMap(localStylesData: IDocumentationObject["localStyles"]) {
   return {
     colors: localStylesData.color.reduce(
       (acc: NodeStyleMap, color: IColorObject) => {

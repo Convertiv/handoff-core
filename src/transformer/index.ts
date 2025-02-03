@@ -15,7 +15,7 @@ import {
 
 export default function transform(
   transformer: Types.ITransformer,
-  documentationObject: Types.IDocumentationObject,
+  documentationObject: Pick<Types.IDocumentationObject, "components" | "localStyles">,
   integration?: Types.IIntegration,
   logger?: Types.ILogger
 ): Types.ITransformerResult {
@@ -40,16 +40,16 @@ export default function transform(
     components: componentDict,
     design: {
       colors:
-        documentationObject.design?.color && transformer.colors
-          ? transformer.colors(documentationObject.design.color)
+        documentationObject.localStyles?.color && transformer.colors
+          ? transformer.colors(documentationObject.localStyles.color)
           : "",
       effects:
-        documentationObject.design?.effect && transformer.effects
-          ? transformer.effects(documentationObject.design.effect)
+        documentationObject.localStyles?.effect && transformer.effects
+          ? transformer.effects(documentationObject.localStyles.effect)
           : "",
       typography:
-        documentationObject.design?.typography && transformer.types
-          ? transformer.types(documentationObject.design.typography)
+        documentationObject.localStyles?.typography && transformer.types
+          ? transformer.types(documentationObject.localStyles.typography)
           : "",
     },
   };

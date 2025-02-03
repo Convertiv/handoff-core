@@ -1,7 +1,6 @@
 import * as ExportTypes from "./../../types";
 import * as FigmaTypes from "../../types/figma";
 import { interpolateTokens, slugify } from "../../utils";
-import { DesignMap } from "../types";
 import { isPluginNode, resolvePaint } from "./../utils";
 import {
   extractComponentInstanceVariantProps,
@@ -28,7 +27,7 @@ export default function extract(
     definition: ExportTypes.IComponentDefinition;
   }[],
   integrationObject?: ExportTypes.IIntegration,
-  designMap?: DesignMap,
+  designMap?: ExportTypes.DesignMap,
   logger?: ExportTypes.ILogger
 ) {
   const componentTokens: {
@@ -71,7 +70,7 @@ function extractComponentInstances(
   }[],
   definition: ExportTypes.IComponentDefinition,
   integrationObject?: ExportTypes.IIntegration,
-  designMap?: DesignMap,
+  designMap?: ExportTypes.DesignMap,
   logger?: ExportTypes.ILogger
 ): ExportTypes.IComponentInstance[] {
   const options = definition.options;
@@ -265,7 +264,7 @@ function extractComponentPartTokenSets(
   root: FigmaTypes.Node | BaseNode,
   part: ExportTypes.IComponentPart,
   tokens: Map<string, string>,
-  designMap: DesignMap
+  designMap: ExportTypes.DesignMap
 ): ExportTypes.TokenSets {
   if (!part.tokens || part.tokens.length === 0) {
     return [];
@@ -324,7 +323,7 @@ function extractComponentPartTokenSets(
 function getReferenceFromMap(
   node: FigmaTypes.Node,
   tokenSet: any,
-  designMap: DesignMap
+  designMap: ExportTypes.DesignMap
 ): ExportTypes.ReferenceObject | undefined {
   const styles = node.styles;
   if (!styles) {

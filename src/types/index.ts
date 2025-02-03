@@ -59,18 +59,16 @@ export interface IFileComponentObject {
 
 export interface IDocumentationObject {
   timestamp?: string;
-  design?: {
+  localStyles?: {
     color?: IColorObject[];
     typography?: ITypographyObject[];
     effect?: IEffectObject[];
+    $map?: DesignMap;
   };
   components?: {
     [key: string]: IFileComponentObject;
   };
-  assets?: {
-    icons: IAssetObject[];
-    logos: IAssetObject[];
-  };
+  assets?: Record<string, IAssetObject[]>;
 }
 
 export interface ILogger {
@@ -212,6 +210,16 @@ export interface ReferenceObject {
   type: string;
   name: string;
   group: string;
+}
+
+export interface NodeStyleMap {
+  [key: string]: ReferenceObject;
+}
+
+export interface DesignMap {
+  colors: NodeStyleMap;
+  effects: NodeStyleMap;
+  typography: NodeStyleMap;
 }
 
 export interface BaseTokenSet {
