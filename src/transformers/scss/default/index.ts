@@ -4,6 +4,7 @@ import {
   IFileComponentObject,
   IHandoffConfigurationComponentOptions,
   IHandoffTransformer,
+  IHandoffTransformerOptions,
   ITypographyObject,
 } from "../../../types";
 import {
@@ -13,21 +14,21 @@ import {
 } from "../../utils";
 import { transformComponentInstance } from "../../../transformer";
 
-export function ScssTransformer(): IHandoffTransformer {
+export function ScssTransformer(options?: IHandoffTransformerOptions): IHandoffTransformer {
   const component = (
     _: string,
     component: IFileComponentObject,
-    options?: IHandoffConfigurationComponentOptions
+    componentOptions?: IHandoffConfigurationComponentOptions
   ) => {
     let result: string | null = null;
 
     for (const instance of component.instances) {
       const heading = formatComponentCodeBlockComment(instance, "//");
-      const tokens = transformComponentInstance("scss", instance, options)
+      const tokens = transformComponentInstance("scss", instance, componentOptions)
         .map(
           (token) =>
-            `\t${token.name}: ${tokenReferenceFormat(token, "scss", true)};`
-        ) // TODO: Introduce option for references to be optional
+            `\t${token.name}: ${tokenReferenceFormat(token, "scss", options?.useVariables)};`
+        )
         .join("\n");
 
       if (!result) {

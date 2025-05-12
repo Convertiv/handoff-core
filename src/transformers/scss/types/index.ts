@@ -4,16 +4,17 @@ import {
   IFileComponentObject,
   IHandoffConfigurationComponentOptions,
   IHandoffTransformer,
+  IHandoffTransformerOptions,
   ITypographyObject,
 } from "../../../types";
 import { formatTypeName } from "../../utils";
 import { processValueWithRules, slugify } from "../../../utils";
 
-export function ScssTypesTransformer(): IHandoffTransformer {
+export function ScssTypesTransformer(options?: IHandoffTransformerOptions): IHandoffTransformer {
   const component = (
     id: string,
     component: IFileComponentObject,
-    options?: IHandoffConfigurationComponentOptions
+    componentOptions?: IHandoffConfigurationComponentOptions
   ) => {
     const result: { [variantProp: string]: Set<string> } = {};
 
@@ -22,7 +23,7 @@ export function ScssTypesTransformer(): IHandoffTransformer {
         if (value) {
           result[variantProp] ??= new Set<string>();
           result[variantProp].add(
-            processValueWithRules(variantProp, value, options, true)
+            processValueWithRules(variantProp, value, componentOptions, options?.useVariables)
           );
         }
       });

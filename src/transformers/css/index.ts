@@ -4,6 +4,7 @@ import {
   IFileComponentObject,
   IHandoffConfigurationComponentOptions,
   IHandoffTransformer,
+  IHandoffTransformerOptions,
   ITypographyObject,
 } from "../../types";
 import {
@@ -13,14 +14,14 @@ import {
 } from "../utils";
 import { transformComponentInstance } from "../../transformer";
 
-export function CssTransformer(): IHandoffTransformer {
+export function CssTransformer(options?: IHandoffTransformerOptions): IHandoffTransformer {
   const component = (
     id: string,
     component: IFileComponentObject,
-    options?: IHandoffConfigurationComponentOptions
+    componentOptions?: IHandoffConfigurationComponentOptions
   ) => {
     const lines = [];
-    const componentCssClass = options?.cssRootClass ?? id;
+    const componentCssClass = componentOptions?.cssRootClass ?? id;
 
     lines.push(`.${componentCssClass} {`);
     const cssVars = component.instances.map(
@@ -28,10 +29,10 @@ export function CssTransformer(): IHandoffTransformer {
         `\t${formatComponentCodeBlockComment(
           instance,
           "/**/"
-        )}\n${transformComponentInstance("css", instance, options)
+        )}\n${transformComponentInstance("css", instance, componentOptions)
           .map(
             (token) =>
-              `\t${token.name}: ${tokenReferenceFormat(token, "css", true)};`
+              `\t${token.name}: ${tokenReferenceFormat(token, "css", options?.useVariables)};`
           )
           .join("\n")}`
     );

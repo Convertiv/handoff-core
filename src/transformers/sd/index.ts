@@ -4,21 +4,22 @@ import {
   IFileComponentObject,
   IHandoffConfigurationComponentOptions,
   IHandoffTransformer,
+  IHandoffTransformerOptions,
   ITypographyObject,
 } from "../../types";
 import { formatTypeName, tokenReferenceFormat } from "../utils";
 import { transformComponentInstance } from "../../transformer";
 
-export function StyleDictionaryTransformer(): IHandoffTransformer {
+export function StyleDictionaryTransformer(options?: IHandoffTransformerOptions): IHandoffTransformer {
   const component = (
     id: string,
     component: IFileComponentObject,
-    options?: IHandoffConfigurationComponentOptions
+    componentOptions?: IHandoffConfigurationComponentOptions
   ) => {
     const sd = {} as any;
 
     component.instances.forEach((instance) => {
-      const tokens = transformComponentInstance("sd", instance, options);
+      const tokens = transformComponentInstance("sd", instance, componentOptions);
 
       tokens.forEach((token) => {
         const tokenNameSegments = token.metadata.nameSegments;
@@ -41,7 +42,7 @@ export function StyleDictionaryTransformer(): IHandoffTransformer {
           ref = ref[el];
         });
 
-        ref["value"] = tokenReferenceFormat(token, "sd", true);
+        ref["value"] = tokenReferenceFormat(token, "sd", options?.useVariables);
       });
     });
 

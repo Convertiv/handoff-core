@@ -4,28 +4,29 @@ import {
   IFileComponentObject,
   IHandoffConfigurationComponentOptions,
   IHandoffTransformer,
+  IHandoffTransformerOptions,
   ITypographyObject,
 } from "../../types";
 import { formatTypeName } from "../utils";
 import { transformComponentInstance } from "../../transformer";
 
-export function MapTransformer(): IHandoffTransformer {
+export function MapTransformer(options?: IHandoffTransformerOptions): IHandoffTransformer {
   const component = (
     _: string,
     component: IFileComponentObject,
-    options?: IHandoffConfigurationComponentOptions
+    componentOptions?: IHandoffConfigurationComponentOptions
   ) => {
     const map = {} as Record<string, string>;
 
     component.instances.forEach((instance) => {
-      const tokens = transformComponentInstance("map", instance, options);
+      const tokens = transformComponentInstance("map", instance, componentOptions);
 
       tokens.forEach((token) => {
         map[token.name] = token.value;
       });
     });
 
-    return JSON.stringify(map);
+    return JSON.stringify(map, null, 2);
   };
 
   const colors = (colors: IColorObject[]) => {
@@ -35,7 +36,7 @@ export function MapTransformer(): IHandoffTransformer {
       result[`color-${color.group}-${color.machineName}`] = `${color.value}`;
     });
 
-    return JSON.stringify(result);
+    return JSON.stringify(result, null, 2);
   };
 
   const effects = (effects: IEffectObject[]) => {
@@ -53,7 +54,7 @@ export function MapTransformer(): IHandoffTransformer {
       });
     }
 
-    return JSON.stringify(result);
+    return JSON.stringify(result, null, 2);
   };
 
   const types = (types: ITypographyObject[]) => {
@@ -80,7 +81,7 @@ export function MapTransformer(): IHandoffTransformer {
       }px`;
     });
 
-    return JSON.stringify(result);
+    return JSON.stringify(result, null, 2);
   };
 
   return { component, colors, effects, types };

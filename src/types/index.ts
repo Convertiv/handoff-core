@@ -112,6 +112,10 @@ export interface IHandoffProvider {
   >;
 }
 
+export interface IHandoffTransformerOptions {
+  useVariables?: boolean;
+}
+
 export interface IHandoffTransformer {
   component?: (
     id: string,
