@@ -174,7 +174,7 @@ function extractComponentInstances(
             instance.variantProperties.get(
               sharedInstanceDefinition.sharedVariantProperty
             ) !==
-            ((configuration?.options ?? {})[sharedInstance.name]
+            ((configuration?.options?.transformer ?? {})[sharedInstance.name]
               ?.defaults ?? {})[
               sharedInstanceDefinition.sharedVariantProperty.toLowerCase()
             ] // TODO: Remove when shared variant functionality gets removed

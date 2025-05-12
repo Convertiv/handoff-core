@@ -7,7 +7,8 @@ export interface IColorObject {
   value: string | null;
   blend: string | null;
   group: string;
-  groupLabel: string;
+  subgroup: string | null;
+  groups: string[];
   sass: string;
   reference: string;
 }
@@ -17,7 +18,6 @@ export interface ITypographyObject {
   name: string;
   machine_name: string;
   group: string;
-  groupLabel: string;
   values: any;
   reference: string;
 }
@@ -27,7 +27,6 @@ export interface IEffectObject {
   name: string;
   machineName: string;
   group: string;
-  groupLabel: string;
   effects: {
     type: FigmaTypes.Effect["type"];
     value: string;
@@ -88,9 +87,10 @@ export interface IHandoffConfigurationComponentOptions {
 }
 
 export interface IHandoffConfiguration {
-  name?: string;
   options?: {
-    [key: string]: IHandoffConfigurationComponentOptions;
+    transformer?: {
+      [key: string]: IHandoffConfigurationComponentOptions;
+    }
   };
 }
 

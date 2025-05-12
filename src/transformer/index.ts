@@ -30,7 +30,9 @@ export default function transform(
         componentDict[componentId] = transformer.component(
           componentId,
           documentationObject.components[componentId],
-          configuration?.options[componentId] ?? configuration?.options["*"]
+          !!configuration?.options?.transformer
+            ? configuration.options.transformer[componentId] ?? configuration.options.transformer["*"]
+            : undefined
         );
       }
     }

@@ -27,7 +27,7 @@ export default function extract(styles: LocalStyleNode[]): IDocumentationObject[
 
   styles.forEach((style) => {
     if (style.type === "RECTANGLE") {
-      let { name, machine_name, group, groupLabel } = fieldData(style.name);
+      let { name, machine_name, group, groups, subgroup } = fieldData(style.name);
       if (isArray(style.effects) && style.effects.length > 0) {
         result.effect.push({
           id: style.id,
@@ -35,7 +35,6 @@ export default function extract(styles: LocalStyleNode[]): IDocumentationObject[
           name,
           machineName: machine_name,
           group,
-          groupLabel,
           effects: style.effects
             .filter(
               (effect) => isValidEffectType(effect.type) && effect.visible
@@ -58,7 +57,8 @@ export default function extract(styles: LocalStyleNode[]): IDocumentationObject[
           id: style.id,
           name,
           group,
-          groupLabel,
+          subgroup,
+          groups,
           value: color.color,
           blend: color.blend,
           sass: `$color-${group}-${machine_name}`,
@@ -67,7 +67,7 @@ export default function extract(styles: LocalStyleNode[]): IDocumentationObject[
         });
       }
     } else if (style.type === "EFFECT") {
-      const { name, machine_name, group, groupLabel } = fieldData(style.name);
+      let { name, machine_name, group } = fieldData(style.name);
       const effects = style.effects.filter(
         (effect) => isValidEffectType(effect.type) && effect.visible
       );
@@ -78,7 +78,6 @@ export default function extract(styles: LocalStyleNode[]): IDocumentationObject[
         name,
         machineName: machine_name,
         group,
-        groupLabel,
         effects: effects.map((effect) => {
           return {
             type: effect.type,
@@ -92,7 +91,7 @@ export default function extract(styles: LocalStyleNode[]): IDocumentationObject[
         }),
       });
     } else if (style.type === "PAINT") {
-      const { name, machine_name, group, groupLabel } = fieldData(style.name);
+      let { name, machine_name, group, groups, subgroup } = fieldData(style.name);
 
       const colors = resolvePaint(style.paints);
       const cssColors = transformFigmaFillsToCssColor(colors);
@@ -101,18 +100,19 @@ export default function extract(styles: LocalStyleNode[]): IDocumentationObject[
         result.color.push({
           id: style.id,
           name,
-          machineName: machine_name,
           group,
-          groupLabel,
+          subgroup,
+          groups,
           value: cssColors.color,
           blend: cssColors.blend,
           sass: `$color-${group}-${machine_name}`,
           reference: `color-${group}-${machine_name}`,
+          machineName: machine_name,
         });
       }
     } else {
       if ("description" in style) {
-        const { name, machine_name, group, groupLabel } = fieldData(style.name);
+        let { machine_name, group } = fieldData(style.name);
         const lineHeight =
           style.lineHeight.unit !== "AUTO"
             ? style.lineHeight.unit === "PIXELS"
@@ -139,10 +139,9 @@ export default function extract(styles: LocalStyleNode[]): IDocumentationObject[
         result.typography.push({
           id: style.id,
           reference: `typography-${group}-${machine_name}`,
-          name,
+          name: style.name,
           machine_name,
           group,
-          groupLabel,
           values: {
             fontSize: style.fontSize,
             fontFamily: style.fontName.family,
@@ -156,7 +155,7 @@ export default function extract(styles: LocalStyleNode[]): IDocumentationObject[
           },
         });
       } else {
-        let { machine_name, group, groupLabel } = fieldData(style.name);
+        let { machine_name, group } = fieldData(style.name);
         let color: string | undefined;
 
         if (
@@ -173,7 +172,6 @@ export default function extract(styles: LocalStyleNode[]): IDocumentationObject[
           name: style.name,
           machine_name,
           group,
-          groupLabel,
           values: {
             // @ts-ignore
             ...style.style,
@@ -235,7 +233,8 @@ interface GroupNameData {
   name: string;
   machine_name: string;
   group: string;
-  groupLabel: string;
+  subgroup: string | null;
+  groups: string[];
 }
 
 /**
@@ -253,17 +252,18 @@ const isArray = (input: any): input is any[] | readonly any[] => {
  * @returns GroupNameData
  */
 const fieldData = (name: string): GroupNameData => {
-  let nameArray = name.split("/");
+  let nameArray = name.split('/');
   const data = {
-    name: "",
-    machine_name: "",
-    group: "",
-    groupLabel: "",
+    name: '',
+    machine_name: '',
+    group: '',
+    subgroup: null,
+    groups: [...nameArray],
   };
   if (nameArray[1]) {
     data.group = toMachineName(nameArray[0]!);
-    data.groupLabel = nameArray[0]!;
-    data.name = nameArray[1];
+    if(nameArray[2]) data.subgroup = toMachineName(nameArray[1]!);
+    data.name = nameArray.splice(1).join(' ');
     data.machine_name = toMachineName(data.name);
   } else {
     data.name = nameArray[0]!;
@@ -271,7 +271,6 @@ const fieldData = (name: string): GroupNameData => {
   }
   return data;
 };
-
 /**
  * Create a machine name from a string
  * @param name

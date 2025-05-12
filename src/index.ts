@@ -11,44 +11,41 @@ import {
 } from "./types";
 import { toLowerCaseKeysAndValues } from "./utils";
 
-const normalizeConfiguration = (configuration?: IHandoffConfiguration) => {
-  const options = configuration?.options ?? {};
+const normalizeConfiguration = (configuration?: IHandoffConfiguration): IHandoffConfiguration => {
+  const baseOptions = { transformer: {}, ...configuration?.options };
 
-  if (!options || !options["*"]) {
-    return configuration;
-  }
+  const sharedTransformerOptions = baseOptions.transformer["*"];
 
-  const wildcardOptions = options["*"];
-  const mergedOptions: IHandoffConfiguration["options"] = {};
-
-  for (const key of Object.keys(options)) {
-    // if (key === '*') continue;
-
-    const specificOptions = options[key];
-
-    mergedOptions[key] = {
-      cssRootClass:
-        specificOptions.cssRootClass || wildcardOptions.cssRootClass || null,
-      tokenNameSegments:
-        specificOptions.tokenNameSegments ||
-        wildcardOptions.tokenNameSegments ||
-        null,
-      defaults: toLowerCaseKeysAndValues({
-        ...wildcardOptions.defaults,
-        ...specificOptions.defaults,
-      }),
-      replace: toLowerCaseKeysAndValues({
-        ...wildcardOptions.replace,
-        ...specificOptions.replace,
-      }),
-    };
-  }
+  // Build normalized transformer settings
+  const normalizedTransformersOptions = Object.fromEntries(
+    Object.entries(baseOptions.transformer).map(([key, specificOptions]) => {
+      return [
+        key,
+        {
+          cssRootClass: specificOptions.cssRootClass ?? null,
+          tokenNameSegments: specificOptions.tokenNameSegments ?? null,
+          defaults: toLowerCaseKeysAndValues({
+            ...(sharedTransformerOptions?.defaults ?? {}),
+            ...specificOptions.defaults,
+          }),
+          replace: toLowerCaseKeysAndValues({
+            ...(sharedTransformerOptions?.replace ?? {}),
+            ...specificOptions.replace,
+          }),
+        },
+      ];
+    })
+  );
 
   return {
     ...configuration,
-    options: mergedOptions,
+    options: {
+      ...baseOptions,
+      transformer: normalizedTransformersOptions, // or merge it back as needed
+    },
   };
 };
+
 
 export function Handoff(
   provider: IHandoffProvider,
