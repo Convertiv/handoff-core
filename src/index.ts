@@ -1,5 +1,5 @@
 import * as extractor from "./extractor";
-import executeTransform from "./transformer";
+import executeTransform, { transformComponentInstance as getComponentInstanceTokens } from "./transformer";
 import {
   IDocumentationObject,
   ILogger,
@@ -96,3 +96,4 @@ export function Handoff(
 export * as Types from "./types";
 export * as Providers from "./providers";
 export * as Transformers from "./transformers";
+export const Functions = { getComponentInstanceTokens };
