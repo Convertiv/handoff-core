@@ -1,5 +1,8 @@
 import * as extractor from "./extractor";
-import executeTransform, { transformComponentInstance as getComponentInstanceTokens } from "./transformer";
+import executeTransform, {
+  transformComponentInstance as getComponentInstanceTokens,
+} from "./transformer";
+import { tokenReferenceFormat } from "./transformers/utils";
 import {
   IDocumentationObject,
   ILogger,
@@ -11,7 +14,9 @@ import {
 } from "./types";
 import { toLowerCaseKeysAndValues } from "./utils";
 
-const normalizeConfiguration = (configuration?: IHandoffConfiguration): IHandoffConfiguration => {
+const normalizeConfiguration = (
+  configuration?: IHandoffConfiguration
+): IHandoffConfiguration => {
   const baseOptions = { transformer: {}, ...configuration?.options };
 
   const sharedTransformerOptions = baseOptions.transformer["*"];
@@ -45,7 +50,6 @@ const normalizeConfiguration = (configuration?: IHandoffConfiguration): IHandoff
     },
   };
 };
-
 
 export function Handoff(
   provider: IHandoffProvider,
@@ -96,4 +100,7 @@ export function Handoff(
 export * as Types from "./types";
 export * as Providers from "./providers";
 export * as Transformers from "./transformers";
-export const Functions = { getComponentInstanceTokens };
+export const TransformerUtils = {
+  getComponentInstanceTokens,
+  tokenReferenceFormat,
+};
