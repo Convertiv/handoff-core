@@ -2,7 +2,7 @@ import * as extractor from "./extractor";
 import executeTransform, {
   transformComponentInstance as getComponentInstanceTokens,
 } from "./transformer";
-import { tokenReferenceFormat } from "./transformers/utils";
+import { formatTypeName, tokenReferenceFormat } from "./transformers/utils";
 import {
   IDocumentationObject,
   ILogger,
@@ -101,6 +101,7 @@ export * as Types from "./types";
 export * as Providers from "./providers";
 export * as Transformers from "./transformers";
 export const TransformerUtils = {
+  formatTypeName,
   getComponentInstanceTokens,
   tokenReferenceFormat,
 };
