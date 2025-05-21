@@ -7,10 +7,10 @@ import {
   IHandoffTransformerOptions,
   ITypographyObject,
 } from "../../types";
-import { formatTypeName } from "../utils";
-import { transformComponentInstance } from "../../transformer";
+import { formatTypographyTokenName } from "../utils";
+import { getComponentInstanceTokens } from "../../transformer";
 
-export function MapTransformer(options?: IHandoffTransformerOptions): IHandoffTransformer {
+export function MapTransformer(_?: IHandoffTransformerOptions): IHandoffTransformer {
   const component = (
     _: string,
     component: IFileComponentObject,
@@ -19,7 +19,7 @@ export function MapTransformer(options?: IHandoffTransformerOptions): IHandoffTr
     const map = {} as Record<string, string>;
 
     component.instances.forEach((instance) => {
-      const tokens = transformComponentInstance("map", instance, componentOptions);
+      const tokens = getComponentInstanceTokens("json", instance, componentOptions);
 
       tokens.forEach((token) => {
         map[token.name] = token.value;
@@ -62,21 +62,21 @@ export function MapTransformer(options?: IHandoffTransformerOptions): IHandoffTr
 
     types.forEach((type) => {
       result[
-        `typography-${formatTypeName(type)}-font-family`
+        `typography-${formatTypographyTokenName(type)}-font-family`
       ] = `${type.values.fontFamily}`;
       result[
-        `typography-${formatTypeName(type)}-font-size`
+        `typography-${formatTypographyTokenName(type)}-font-size`
       ] = `${type.values.fontSize}px`;
       result[
-        `typography-${formatTypeName(type)}-font-weight`
+        `typography-${formatTypographyTokenName(type)}-font-weight`
       ] = `${type.values.fontWeight}`;
-      result[`typography-${formatTypeName(type)}-line-height`] = `${(
+      result[`typography-${formatTypographyTokenName(type)}-line-height`] = `${(
         type.values.lineHeightPx / type.values.fontSize
       ).toFixed(1)}`;
       result[
-        `typography-${formatTypeName(type)}-letter-spacing`
+        `typography-${formatTypographyTokenName(type)}-letter-spacing`
       ] = `${type.values.letterSpacing}px`;
-      result[`typography-${formatTypeName(type)}-paragraph-spacing`] = `${
+      result[`typography-${formatTypographyTokenName(type)}-paragraph-spacing`] = `${
         type.values.paragraphSpacing | 20
       }px`;
     });

@@ -26,7 +26,7 @@ export default function extract(
     componentsMetadata: Map<string, FigmaTypes.ComponentMetadata>;
     definition: ExportTypes.IComponentDefinition;
   }[],
-  designMap?: ExportTypes.DesignMap,
+  designMap?: ExportTypes.IDesignMap,
   configuration?: ExportTypes.IHandoffConfiguration,
   logger?: ExportTypes.ILogger
 ) {
@@ -70,7 +70,7 @@ function extractComponentInstances(
   }[],
   definition: ExportTypes.IComponentDefinition,
   configuration?: ExportTypes.IHandoffConfiguration,
-  designMap?: ExportTypes.DesignMap,
+  designMap?: ExportTypes.IDesignMap,
   logger?: ExportTypes.ILogger
 ): ExportTypes.IComponentInstance[] {
   const options = definition.options;
@@ -264,13 +264,13 @@ function extractComponentPartTokenSets(
   root: FigmaTypes.Node | BaseNode,
   part: ExportTypes.IComponentPart,
   tokens: Map<string, string>,
-  designMap: ExportTypes.DesignMap
-): ExportTypes.TokenSets {
+  designMap: ExportTypes.IDesignMap
+): ExportTypes.TTokenSets {
   if (!part.tokens || part.tokens.length === 0) {
     return [];
   }
 
-  const tokenSets: ExportTypes.TokenSets = [];
+  const tokenSets: ExportTypes.TTokenSets = [];
 
   for (const def of part.tokens) {
     if (!def.from || !def.export || def.export.length === 0) {
@@ -323,8 +323,8 @@ function extractComponentPartTokenSets(
 function getReferenceFromMap(
   node: FigmaTypes.Node,
   tokenSet: any,
-  designMap: ExportTypes.DesignMap
-): ExportTypes.ReferenceObject | undefined {
+  designMap: ExportTypes.IDesignMap
+): ExportTypes.IReferenceObject | undefined {
   const styles = node.styles;
   if (!styles) {
     return undefined;
@@ -456,9 +456,9 @@ function parsePathNodeParams(path: string): {
 }
 
 function mergeTokenSets(
-  first: ExportTypes.TokenSet,
-  second: ExportTypes.TokenSet
-): ExportTypes.TokenSet {
+  first: ExportTypes.TTokenSet,
+  second: ExportTypes.TTokenSet
+): ExportTypes.TTokenSet {
   return mergeWith({}, first, second, (a, b) => (b === null ? a : undefined));
 }
 
@@ -481,8 +481,8 @@ function generateComponentId(variantProperties: Map<string, string>) {
  */
 function extractNodeExportable(
   node: FigmaTypes.Node | BaseNode,
-  exportable: ExportTypes.Exportable
-): ExportTypes.TokenSet | null {
+  exportable: ExportTypes.TExportable
+): ExportTypes.TTokenSet | null {
   switch (exportable) {
     case "BACKGROUND":
       return extractNodeBackground(node);
@@ -507,7 +507,7 @@ function extractNodeExportable(
 
 function extractNodeFill(
   node: FigmaTypes.Node | BaseNode
-): ExportTypes.FillTokenSet | null {
+): ExportTypes.IFillTokenSet | null {
   if (isPluginNode(node)) {
     let color: FigmaTypes.Paint[] = [];
 
@@ -536,7 +536,7 @@ function extractNodeFill(
 
 function extractNodeTypography(
   node: FigmaTypes.Node | BaseNode
-): ExportTypes.TypographyTokenSet | null {
+): ExportTypes.ITypographyTokenSet | null {
   if (isPluginNode(node)) {
     if (node.type === "TEXT") {
       const fontSize = node.fontSize !== figma.mixed ? node.fontSize : 16;
@@ -594,7 +594,7 @@ function extractNodeTypography(
 
 function extractNodeEffect(
   node: FigmaTypes.Node | BaseNode
-): ExportTypes.EffectTokenSet | null {
+): ExportTypes.IEffectTokenSet | null {
   if (isPluginNode(node)) {
     return {
       name: "EFFECT",
@@ -618,7 +618,7 @@ function extractNodeEffect(
 
 function extractNodeBorder(
   node: FigmaTypes.Node | BaseNode
-): ExportTypes.BorderTokenSet | null {
+): ExportTypes.IBorderTokenSet | null {
   if (isPluginNode(node)) {
     return {
       name: "BORDER",
@@ -646,7 +646,7 @@ function extractNodeBorder(
 
 function extractNodeSpacing(
   node: FigmaTypes.Node | BaseNode
-): ExportTypes.SpacingTokenSet | null {
+): ExportTypes.ISpacingTokenSet | null {
   return {
     name: "SPACING",
     padding: {
@@ -661,7 +661,7 @@ function extractNodeSpacing(
 
 function extractNodeBackground(
   node: FigmaTypes.Node | BaseNode
-): ExportTypes.BackgroundTokenSet | null {
+): ExportTypes.IBackgroundTokenSet | null {
   if (isPluginNode(node)) {
     return {
       name: "BACKGROUND",
@@ -678,7 +678,7 @@ function extractNodeBackground(
 
 function extractNodeOpacity(
   node: FigmaTypes.Node | BaseNode
-): ExportTypes.OpacityTokenSet | null {
+): ExportTypes.IOpacityTokenSet | null {
   return {
     name: "OPACITY",
     opacity: "opacity" in node ? node.opacity ?? 1 : 1,
@@ -692,7 +692,7 @@ function extractNodeOpacity(
  */
 function extractNodeSize(
   node: FigmaTypes.Node | BaseNode
-): ExportTypes.SizeTokenSet | null {
+): ExportTypes.ISizeTokenSet | null {
   return {
     name: "SIZE",
     width:

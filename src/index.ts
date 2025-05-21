@@ -1,8 +1,3 @@
-import * as extractor from "./extractor";
-import executeTransform, {
-  transformComponentInstance as getComponentInstanceTokens,
-} from "./transformer";
-import { formatTypeName, tokenReferenceFormat } from "./transformers/utils";
 import {
   IDocumentationObject,
   ILogger,
@@ -12,51 +7,18 @@ import {
   ITransformerResult,
   IAssetObject,
 } from "./types";
-import { toLowerCaseKeysAndValues } from "./utils";
 
-const normalizeConfiguration = (
-  configuration?: IHandoffConfiguration
-): IHandoffConfiguration => {
-  const baseOptions = { transformer: {}, ...configuration?.options };
-
-  const sharedTransformerOptions = baseOptions.transformer["*"];
-
-  // Build normalized transformer settings
-  const normalizedTransformersOptions = Object.keys(baseOptions.transformer).reduce(function (acc, key) {
-    const specificOptions = baseOptions.transformer[key];
-
-    const sharedDefaults = (sharedTransformerOptions && sharedTransformerOptions.defaults) || {};
-    const sharedReplace = (sharedTransformerOptions && sharedTransformerOptions.replace) || {};
-
-    acc[key] = {
-      cssRootClass: specificOptions.cssRootClass || null,
-      tokenNameSegments: specificOptions.tokenNameSegments || null,
-      defaults: toLowerCaseKeysAndValues(
-        Object.assign({}, sharedDefaults, specificOptions.defaults)
-      ),
-      replace: toLowerCaseKeysAndValues(
-        Object.assign({}, sharedReplace, specificOptions.replace)
-      )
-    };
-
-    return acc;
-  }, {});
-
-  return {
-    ...configuration,
-    options: {
-      ...baseOptions,
-      transformer: normalizedTransformersOptions, // or merge it back as needed
-    },
-  };
-};
+import * as extractor from "./extractor";
+import executeTransform, { getComponentInstanceTokens } from "./transformer";
+import { formatTypographyTokenName, formatTokenValue } from "./transformers/utils";
+import { normalizeHandoffConfig } from "./utils/config";
 
 export function Handoff(
   provider: IHandoffProvider,
   configuration?: IHandoffConfiguration,
   logger?: ILogger
 ) {
-  const normalizedConfig = normalizeConfiguration(configuration);
+  const normalizedConfig = normalizeHandoffConfig(configuration);
 
   const extractAssets = async (name: string): Promise<IAssetObject[]> => {
     return extractor.extractAssets(provider, name, normalizedConfig, logger);
@@ -101,7 +63,7 @@ export * as Types from "./types";
 export * as Providers from "./providers";
 export * as Transformers from "./transformers";
 export const TransformerUtils = {
-  formatTypeName,
+  formatTokenValue,
+  formatTypographyTokenName,
   getComponentInstanceTokens,
-  tokenReferenceFormat,
 };

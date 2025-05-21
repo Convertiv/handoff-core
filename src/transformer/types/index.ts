@@ -1,4 +1,4 @@
-export type TokenType = "css" | "scss" | "sd" | "map" | "default";
+export type TokenType = "css" | "scss" | "json";
 
 export type TokenDict = {
   [property: string]:

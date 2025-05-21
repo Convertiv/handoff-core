@@ -8,11 +8,11 @@ import {
   ITypographyObject,
 } from "../../types";
 import {
-  formatComponentCodeBlockComment,
-  formatTypeName,
-  tokenReferenceFormat,
+  getComponentCommentBlock,
+  formatTypographyTokenName,
+  formatTokenValue,
 } from "../utils";
-import { transformComponentInstance } from "../../transformer";
+import { getComponentInstanceTokens } from "../../transformer";
 
 export function CssTransformer(options?: IHandoffTransformerOptions): IHandoffTransformer {
   const component = (
@@ -26,13 +26,13 @@ export function CssTransformer(options?: IHandoffTransformerOptions): IHandoffTr
     lines.push(`.${componentCssClass} {`);
     const cssVars = component.instances.map(
       (instance) =>
-        `\t${formatComponentCodeBlockComment(
+        `\t${getComponentCommentBlock(
           instance,
           "/**/"
-        )}\n${transformComponentInstance("css", instance, componentOptions)
+        )}\n${getComponentInstanceTokens("css", instance, componentOptions)
           .map(
             (token) =>
-              `\t${token.name}: ${tokenReferenceFormat(token, "css", options?.useVariables)};`
+              `\t${token.name}: ${formatTokenValue(token, "css", options?.useVariables)};`
           )
           .join("\n")}`
     );
@@ -78,22 +78,22 @@ export function CssTransformer(options?: IHandoffTransformerOptions): IHandoffTr
     types.forEach((type) => {
       stringBuilder.push(
         [
-          `	--typography-${formatTypeName(type)}-font-family: '${
+          `	--typography-${formatTypographyTokenName(type)}-font-family: '${
             type.values.fontFamily
           }';`,
-          `	--typography-${formatTypeName(type)}-font-size: ${
+          `	--typography-${formatTypographyTokenName(type)}-font-size: ${
             type.values.fontSize
           }px;`,
-          `	--typography-${formatTypeName(type)}-font-weight: ${
+          `	--typography-${formatTypographyTokenName(type)}-font-weight: ${
             type.values.fontWeight
           };`,
-          `	--typography-${formatTypeName(type)}-line-height: ${(
+          `	--typography-${formatTypographyTokenName(type)}-line-height: ${(
             type.values.lineHeightPx / type.values.fontSize
           ).toFixed(1)};`,
-          `	--typography-${formatTypeName(type)}-letter-spacing: ${
+          `	--typography-${formatTypographyTokenName(type)}-letter-spacing: ${
             type.values.letterSpacing
           }px;`,
-          `	--typography-${formatTypeName(type)}-paragraph-spacing: ${
+          `	--typography-${formatTypographyTokenName(type)}-paragraph-spacing: ${
             type.values.paragraphSpacing | 20
           }px;`,
         ].join("\n")

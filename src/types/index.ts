@@ -49,7 +49,7 @@ export interface IComponentInstance {
   name: string;
   description?: string;
   variantProperties: [string, string][];
-  parts?: { [key: string]: TokenSets };
+  parts?: { [key: string]: TTokenSets };
 }
 
 export interface IFileComponentObject {
@@ -62,7 +62,7 @@ export interface IDocumentationObject {
     color?: IColorObject[];
     typography?: ITypographyObject[];
     effect?: IEffectObject[];
-    $map?: DesignMap;
+    $map?: IDesignMap;
   };
   components?: {
     [key: string]: IFileComponentObject;
@@ -95,7 +95,7 @@ export interface IHandoffConfiguration {
 }
 
 export interface IHandoffProvider {
-  getLocalStyles?: (logger?: ILogger) => Promise<LocalStyleNode[]>;
+  getLocalStyles?: (logger?: ILogger) => Promise<TLocalStyleNode[]>;
   getAssets?: (
     component: string,
     logger?: ILogger
@@ -143,7 +143,7 @@ export interface IComponentDefinition {
 
 export interface IComponentPart {
   id: string;
-  tokens: { from: string; export: Exportable[] }[];
+  tokens: { from: string; export: TExportable[] }[];
   condition?: string[][];
 }
 
@@ -181,13 +181,13 @@ export interface IToken {
   metadata: {
     part: string;
     cssProperty: string;
-    reference?: ReferenceObject;
+    reference?: IReferenceObject;
     isSupportedCssProperty: boolean;
     nameSegments: string[];
   };
 }
 
-export type Exportable =
+export type TExportable =
   | "BACKGROUND"
   | "BORDER"
   | "SPACING"
@@ -197,47 +197,47 @@ export type Exportable =
   | "OPACITY"
   | "SIZE";
 
-export type LocalStyleNode =
+export type TLocalStyleNode =
   | TextStyle
   | PaintStyle
   | EffectStyle
   | FigmaTypes.Text
   | FigmaTypes.Rectangle;
 
-export interface ReferenceObject {
+export interface IReferenceObject {
   reference: string;
   type: string;
   name: string;
   group: string;
 }
 
-export interface NodeStyleMap {
-  [key: string]: ReferenceObject;
+export interface INodeStyleMap {
+  [key: string]: IReferenceObject;
 }
 
-export interface DesignMap {
-  colors: NodeStyleMap;
-  effects: NodeStyleMap;
-  typography: NodeStyleMap;
+export interface IDesignMap {
+  colors: INodeStyleMap;
+  effects: INodeStyleMap;
+  typography: INodeStyleMap;
 }
 
-export interface BaseTokenSet {
-  name: Exportable;
-  reference?: ReferenceObject;
+export interface IBaseTokenSet {
+  name: TExportable;
+  reference?: IReferenceObject;
 }
 
-export interface BackgroundTokenSet extends BaseTokenSet {
+export interface IBackgroundTokenSet extends IBaseTokenSet {
   name: "BACKGROUND";
   background: FigmaTypes.Paint[];
 }
 
-export interface SpacingTokenSet extends BaseTokenSet {
+export interface ISpacingTokenSet extends IBaseTokenSet {
   name: "SPACING";
   padding: { [key in "TOP" | "RIGHT" | "BOTTOM" | "LEFT"]: number };
   spacing: number;
 }
 
-export interface BorderTokenSet extends BaseTokenSet {
+export interface IBorderTokenSet extends IBaseTokenSet {
   name: "BORDER";
   weight: number;
   radius: number;
@@ -245,7 +245,7 @@ export interface BorderTokenSet extends BaseTokenSet {
   dashes: number[];
 }
 
-export interface TypographyTokenSet extends BaseTokenSet {
+export interface ITypographyTokenSet extends IBaseTokenSet {
   name: "TYPOGRAPHY";
   fontFamily: string;
   fontSize: number;
@@ -258,35 +258,35 @@ export interface TypographyTokenSet extends BaseTokenSet {
   characters: string;
 }
 
-export interface FillTokenSet extends BaseTokenSet {
+export interface IFillTokenSet extends IBaseTokenSet {
   name: "FILL";
   color: FigmaTypes.Paint[];
 }
 
-export interface EffectTokenSet extends BaseTokenSet {
+export interface IEffectTokenSet extends IBaseTokenSet {
   name: "EFFECT";
   effect: FigmaTypes.Effect[];
 }
 
-export interface OpacityTokenSet extends BaseTokenSet {
+export interface IOpacityTokenSet extends IBaseTokenSet {
   name: "OPACITY";
   opacity: number;
 }
 
-export interface SizeTokenSet extends BaseTokenSet {
+export interface ISizeTokenSet extends IBaseTokenSet {
   name: "SIZE";
   width: number;
   height: number;
 }
 
-export type TokenSet =
-  | BackgroundTokenSet
-  | SpacingTokenSet
-  | BorderTokenSet
-  | TypographyTokenSet
-  | FillTokenSet
-  | EffectTokenSet
-  | OpacityTokenSet
-  | SizeTokenSet;
+export type TTokenSet =
+  | IBackgroundTokenSet
+  | ISpacingTokenSet
+  | IBorderTokenSet
+  | ITypographyTokenSet
+  | IFillTokenSet
+  | IEffectTokenSet
+  | IOpacityTokenSet
+  | ISizeTokenSet;
 
-export type TokenSets = TokenSet[];
+export type TTokenSets = TTokenSet[];

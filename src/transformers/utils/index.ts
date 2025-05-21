@@ -2,30 +2,53 @@ import { toSDMachineName } from "../../utils";
 import { IComponentInstance, IToken, ITypographyObject } from "../../types";
 
 /**
- * Capitalizes the first letter of the input string and converts the rest of the string to lowercase.
- * If the input is an empty string or falsy, an empty string is returned.
+ * Capitalizes the first letter of a string and converts the rest to lowercase
+ * 
+ * @param {string} input - The string to capitalize
+ * @returns {string} The capitalized string, or empty string if input is falsy
+ * 
+ * @example
+ * capitalize("hello") // Returns "Hello"
+ * capitalize("WORLD") // Returns "World"
+ * capitalize("") // Returns ""
+ */
+const capitalize = (input: string): string =>
+  input ? input.charAt(0).toUpperCase() + input.slice(1).toLowerCase() : "";
+
+/**
+ * Formats a typography token name by combining group and machine name if group exists
+ * @param {ITypographyObject} type - The typography object containing group and machine_name properties
+ * @returns {string} The formatted typography token name
+ */
+export const formatTypographyTokenName = (type: ITypographyObject) =>
+  type.group ? `${type.group}-${type.machine_name}` : `${type.machine_name}`;
+
+/**
+ * Formats a token value based on the specified format type and whether to use variable references.
  *
- * @param {string} input - The string to be capitalized.
- * @returns {string} - The input string with the first letter capitalized and the rest in lowercase, or an empty string if the input is falsy.
+ * @param {IToken} token - The token object containing value and metadata
+ * @param {("css" | "scss" | "json")} formatType - The desired output format type
+ * @param {boolean} [useVariableRefs] - Whether to use variable references instead of direct values
+ * @returns {string} The formatted token value
  *
  * @example
- * capitalize("hello") // Output: "Hello"
- * capitalize("WORLD") // Output: "World"
- * capitalize("")      // Output: ""
+ * // For CSS format with variable references
+ * formatTokenValue(token, "css", true) // Returns "var(--token-name)"
+ *
+ * @example
+ * // For Style Dictionary format
+ * formatTokenValue(token, "json", true) // Returns "{color.primary.base}"
  */
-export const capitalize = (input: string): string => {
-  if (!input) return "";
-  return input.charAt(0).toUpperCase() + input.slice(1).toLowerCase();
-};
-
-export const tokenReferenceFormat = (
+export const formatTokenValue = (
   token: IToken,
-  type: "css" | "scss" | "sd",
+  formatType: "css" | "scss" | "json",
   useVariableRefs?: boolean
 ) => {
   if (!useVariableRefs) {
     return token.value;
   }
+
+  getComponentCommentBlock
 
   let referenceObject = token.metadata.reference;
 
@@ -36,7 +59,7 @@ export const tokenReferenceFormat = (
   let wrapped = "";
   let reference: string | undefined = "";
 
-  if (type === "sd") {
+  if (formatType === "json") {
     // build reference for style dictionary
     if (referenceObject.type === "color") {
       reference = `color.${referenceObject.group}.${toSDMachineName(
@@ -99,13 +122,20 @@ export const tokenReferenceFormat = (
     ) {
       reference += `-${token.metadata.cssProperty}`;
     }
-    wrapped = type === "css" ? `var(--${reference})` : `$${reference}`;
+    wrapped = formatType === "css" ? `var(--${reference})` : `$${reference}`;
   }
 
   return reference ? wrapped : token.value;
 };
 
-export const formatComponentCodeBlockComment = (
+/**
+ * Formats a component instance into a comment block with its name and variant properties
+ * 
+ * @param component - The component instance to format
+ * @param format - The comment format to use, either "\/\*\*\/" for CSS-style comments or "\/\/" for single-line comments
+ * @returns A formatted comment string
+ */
+export const getComponentCommentBlock = (
   component: IComponentInstance,
   format: "/**/" | "//"
 ): string => {
@@ -119,6 +149,3 @@ export const formatComponentCodeBlockComment = (
 
   return format === "/**/" ? `/* ${str} */` : `// ${str}`;
 };
-
-export const formatTypeName = (type: ITypographyObject) =>
-  type.group ? `${type.group}-${type.machine_name}` : `${type.machine_name}`;

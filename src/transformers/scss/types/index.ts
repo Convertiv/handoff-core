@@ -7,7 +7,7 @@ import {
   IHandoffTransformerOptions,
   ITypographyObject,
 } from "../../../types";
-import { formatTypeName } from "../../utils";
+import { formatTypographyTokenName } from "../../utils";
 import { processValueWithRules, slugify } from "../../../utils";
 
 export function ScssTypesTransformer(options?: IHandoffTransformerOptions): IHandoffTransformer {
@@ -83,7 +83,7 @@ export function ScssTypesTransformer(options?: IHandoffTransformerOptions): IHan
 
     stringBuilder.push(
       `$type-sizes: ( ${types
-        .map((type) => `"${formatTypeName(type)}"`)
+        .map((type) => `"${formatTypographyTokenName(type)}"`)
         .join(", ")} );`
     );
 

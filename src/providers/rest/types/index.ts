@@ -1,4 +1,4 @@
-import { Exportable } from "../../../types";
+import { TExportable } from "../../../types";
 
 export interface IComponentSetMetadata {
   exposed: boolean;
@@ -18,7 +18,7 @@ interface IComponentPart {
 
 interface IExportDefinition {
   from: string;
-  export: Exportable[];
+  export: TExportable[];
 }
 
 interface ISharedComponentVariant {

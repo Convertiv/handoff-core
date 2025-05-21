@@ -1,5 +1,5 @@
 import { Node } from "../../../types/figma";
-import { Exportable } from "../../../types";
+import { TExportable } from "../../../types";
 
 export function isNodeType<Type extends Node["type"]>(
   obj: Node | BaseNode | null | undefined,
@@ -103,7 +103,7 @@ export const normalizeNamePart = (namePart: string) => {
     .toLowerCase();
 };
 
-export const isExportable = (exportable: string): exportable is Exportable => {
+export const isExportable = (exportable: string): exportable is TExportable => {
   return [
     "BACKGROUND",
     "BORDER",
