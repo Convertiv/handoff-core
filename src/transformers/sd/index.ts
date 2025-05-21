@@ -7,8 +7,8 @@ import {
   IHandoffTransformerOptions,
   ITypographyObject,
 } from "../../types";
-import { formatTypeName, tokenReferenceFormat } from "../utils";
-import { transformComponentInstance } from "../../transformer";
+import { formatTypographyTokenName, formatTokenValue } from "../utils";
+import { getComponentInstanceTokens } from "../../transformer";
 
 export function StyleDictionaryTransformer(options?: IHandoffTransformerOptions): IHandoffTransformer {
   const component = (
@@ -19,7 +19,7 @@ export function StyleDictionaryTransformer(options?: IHandoffTransformerOptions)
     const sd = {} as any;
 
     component.instances.forEach((instance) => {
-      const tokens = transformComponentInstance("sd", instance, componentOptions);
+      const tokens = getComponentInstanceTokens("json", instance, componentOptions);
 
       tokens.forEach((token) => {
         const tokenNameSegments = token.metadata.nameSegments;
@@ -42,7 +42,7 @@ export function StyleDictionaryTransformer(options?: IHandoffTransformerOptions)
           ref = ref[el];
         });
 
-        ref["value"] = tokenReferenceFormat(token, "sd", options?.useVariables);
+        ref["value"] = formatTokenValue(token, "json", options?.useVariables);
       });
     });
 
@@ -87,7 +87,7 @@ export function StyleDictionaryTransformer(options?: IHandoffTransformerOptions)
         typography: types.reduce(
           (obj, type) => ({
             ...obj,
-            [formatTypeName(type)]: {
+            [formatTypographyTokenName(type)]: {
               font: {
                 family: { value: type.values.fontFamily },
                 size: { value: `${type.values.fontSize}px` },

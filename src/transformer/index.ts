@@ -57,7 +57,7 @@ export default function transform(
   };
 }
 
-export const transformComponentInstance = (
+export const getComponentInstanceTokens = (
   tokenType: TransformerTypes.TokenType,
   component: Types.IComponentInstance,
   options?: Types.IHandoffConfigurationComponentOptions
@@ -94,7 +94,7 @@ const transformComponentInstanceTokens = (
   component: Types.IComponentInstance,
   part: string,
   options?: Types.IHandoffConfigurationComponentOptions,
-  reference?: Types.ReferenceObject
+  reference?: Types.IReferenceObject
 ) => {
   return tokens
     ? Object.entries(tokens).map(([cssProperty, value]) => {
@@ -199,7 +199,7 @@ const normalizeComponentPartName = (part: string) => {
 };
 
 const getTokenSetTokens = (
-  tokenSet: Types.TokenSet
+  tokenSet: Types.TTokenSet
 ): TransformerTypes.TokenDict | undefined => {
   switch (tokenSet.name) {
     case "BACKGROUND":
@@ -224,7 +224,7 @@ const getTokenSetTokens = (
 };
 
 const getBackgroundTokenSetTokens = (
-  tokenSet: Types.BackgroundTokenSet
+  tokenSet: Types.IBackgroundTokenSet
 ): TransformerTypes.BackgroundTokenDict => ({
   background: {
     value: transformFigmaFillsToCssColor(tokenSet.background).color,
@@ -233,7 +233,7 @@ const getBackgroundTokenSetTokens = (
 });
 
 const getSpacingTokenSetTokens = (
-  tokenSet: Types.SpacingTokenSet
+  tokenSet: Types.ISpacingTokenSet
 ): TransformerTypes.SpacingTokenDict => ({
   "padding-y": {
     value: `${asCssNumber(
@@ -266,7 +266,7 @@ const getSpacingTokenSetTokens = (
 });
 
 const getBorderTokenSetTokens = (
-  tokenSet: Types.BorderTokenSet
+  tokenSet: Types.IBorderTokenSet
 ): TransformerTypes.BorderTokenDict => ({
   "border-width": `${asCssNumber(tokenSet.weight)}px`,
   "border-radius": `${asCssNumber(tokenSet.radius)}px`,
@@ -275,7 +275,7 @@ const getBorderTokenSetTokens = (
 });
 
 const getTypographyTokenSetTokens = (
-  tokenSet: Types.TypographyTokenSet
+  tokenSet: Types.ITypographyTokenSet
 ): TransformerTypes.TypographyTokenDict => ({
   "font-family": `'${tokenSet.fontFamily}'`,
   "font-size": `${asCssNumber(tokenSet.fontSize)}px`,
@@ -288,13 +288,13 @@ const getTypographyTokenSetTokens = (
 });
 
 const getFillTokenSetTokens = (
-  tokenSet: Types.FillTokenSet
+  tokenSet: Types.IFillTokenSet
 ): TransformerTypes.FillTokenDict => ({
   color: transformFigmaFillsToCssColor(tokenSet.color, true).color,
 });
 
 const getEffectTokenSetTokens = (
-  tokenSet: Types.EffectTokenSet
+  tokenSet: Types.IEffectTokenSet
 ): TransformerTypes.EffectTokenDict => ({
   "box-shadow":
     tokenSet.effect
@@ -304,13 +304,13 @@ const getEffectTokenSetTokens = (
 });
 
 const getOpacityTokenSetTokens = (
-  tokenSet: Types.OpacityTokenSet
+  tokenSet: Types.IOpacityTokenSet
 ): TransformerTypes.OpacityTokenDict => ({
   opacity: `${asCssNumber(tokenSet.opacity)}`,
 });
 
 const getSizeTokenSetTokens = (
-  tokenSet: Types.SizeTokenSet
+  tokenSet: Types.ISizeTokenSet
 ): TransformerTypes.TokenDict => ({
   width: `${asCssNumber(tokenSet.width) ?? "0"}px`,
   "width-raw": {

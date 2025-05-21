@@ -47,7 +47,7 @@ export function RestApiProvider(auth: {
         auth.accessToken
       );
 
-      const nodes: ExportTypes.LocalStyleNode[] = [];
+      const nodes: ExportTypes.TLocalStyleNode[] = [];
 
       Object.entries(childrenApiResponse.data.nodes).forEach(([_, node]) => {
         if (!node) {

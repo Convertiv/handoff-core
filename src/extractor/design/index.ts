@@ -10,14 +10,14 @@ import {
   IColorObject,
   IDocumentationObject,
   IEffectObject,
-  LocalStyleNode,
-  ReferenceObject,
+  TLocalStyleNode,
+  IReferenceObject,
   ITypographyObject,
-  NodeStyleMap,
+  INodeStyleMap,
 } from "../../types";
 import { resolvePaint } from "../utils";
 
-export default function extract(styles: LocalStyleNode[]): IDocumentationObject["localStyles"] {
+export default function extract(styles: TLocalStyleNode[]): IDocumentationObject["localStyles"] {
   const result: IDocumentationObject["localStyles"] = {
     color: [],
     effect: [],
@@ -190,38 +190,38 @@ export default function extract(styles: LocalStyleNode[]): IDocumentationObject[
 function extractMap(localStylesData: IDocumentationObject["localStyles"]) {
   return {
     colors: localStylesData.color.reduce(
-      (acc: NodeStyleMap, color: IColorObject) => {
+      (acc: INodeStyleMap, color: IColorObject) => {
         acc[color.id] = {
           reference: color.reference,
           type: "color",
           group: color.group,
           name: color.name,
-        } as ReferenceObject;
+        } as IReferenceObject;
 
         return acc;
       },
       {}
     ),
     effects: localStylesData.effect.reduce(
-      (acc: NodeStyleMap, effect: IEffectObject) => {
+      (acc: INodeStyleMap, effect: IEffectObject) => {
         acc[effect.id] = {
           reference: effect.reference,
           group: effect.group,
           name: effect.name,
           type: "effect",
-        } as ReferenceObject;
+        } as IReferenceObject;
         return acc;
       },
       {}
     ),
     typography: localStylesData.typography.reduce(
-      (acc: NodeStyleMap, typo: ITypographyObject) => {
+      (acc: INodeStyleMap, typo: ITypographyObject) => {
         acc[typo.id] = {
           reference: typo.reference,
           type: "typography",
           group: typo.group,
           name: typo.name,
-        } as ReferenceObject;
+        } as IReferenceObject;
         return acc;
       },
       {}
