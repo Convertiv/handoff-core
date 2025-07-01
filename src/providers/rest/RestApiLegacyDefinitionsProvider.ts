@@ -1,7 +1,5 @@
-import axios from "axios";
 import * as ExportTypes from "../../types";
 import * as FigmaTypes from "../../types/figma";
-import { AxiosResponse } from "axios";
 import {
   getAssetURL,
   getComponentSetNodes,
@@ -122,12 +120,16 @@ export function RestApiLegacyDefinitionsProvider(
               return null;
             }
 
-            const assetData = await axios.get<string>(assetUrl);
+            const assetData = await fetch(assetUrl);
+            if (!assetData.ok) {
+              throw new Error(`Failed to fetch asset: ${assetData.status}`);
+            }
+            const assetText = await assetData.text();
 
             return {
               name: componentData.name,
               description: componentData.description,
-              data: assetData.data,
+              data: assetText,
               extension: defaultExtension,
             };
           }
@@ -147,10 +149,7 @@ export function RestApiLegacyDefinitionsProvider(
   };
 
   const getComponents = async (logger?: ExportTypes.ILogger) => {
-    let fileComponentSetsRes: AxiosResponse<
-      FigmaTypes.FileComponentSetsResponse,
-      any
-    >;
+    let fileComponentSetsRes: { data: FigmaTypes.FileComponentSetsResponse };
 
     try {
       fileComponentSetsRes = await getComponentSets(
