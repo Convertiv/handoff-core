@@ -67,3 +67,8 @@ export const TransformerUtils = {
   formatTypographyTokenName,
   getComponentInstanceTokens,
 };
+
+// P1: reference-preserving, multi-axis DTCG stage. Pure, source-agnostic engine
+// consumed by handoff-app (storage/resolve/serve) and the Figma plugin (P3/P4).
+// The legacy styles-only string formatters above are untouched; this is additive.
+export * as Dtcg from "./dtcg";
