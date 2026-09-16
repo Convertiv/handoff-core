@@ -11,7 +11,10 @@
  *  - infer `$type` + unit from `resolvedType` + `scopes`;
  *  - assemble composite `typography`/`shadow` tokens from styles (not decomposed);
  *  - infer `tier` (literal = primitive, aliased = semantic);
- *  - stamp `$extensions.handoff = { originalId, source:'figma', tier, scopes }`.
+ *  - stamp `$extensions.handoff = { originalId, name, source:'figma', tier, scopes }`,
+ *    where `name` is the verbatim Figma name — DTCG path segments are slugified and
+ *    slugification is lossy (`SS&C Blue` → `ss-c-blue`), so the human name has to
+ *    travel with the token for the display layer to have anything to print.
  */
 
 import {
@@ -27,12 +30,16 @@ import {
 import {
   FigmaEffectStyle,
   FigmaFoundationsSnapshot,
+  FigmaPaintStyle,
   FigmaTextStyle,
   FigmaVariable,
   FigmaVariableCollection,
 } from "../types/figma-snapshot";
-import { Color, Effect, Paint } from "../types/figma";
-import { transformFigmaColorToCssColor } from "../utils/colors";
+import { Color, Effect } from "../types/figma";
+import {
+  transformFigmaColorToCssColor,
+  transformFigmaFillsToCssColor,
+} from "../utils/colors";
 import { slugify } from "../utils/strings";
 import { axisKey } from "./axis-key";
 
@@ -342,6 +349,7 @@ function buildVariableToken(
 
   const meta: HandoffTokenMeta = {
     originalId: variable.id,
+    name: variable.name,
     source: "figma",
     tier: sawAlias ? "semantic" : "primitive",
     scopes: variable.scopes,
@@ -403,7 +411,12 @@ function buildTypographyToken(style: FigmaTextStyle): DtcgToken {
     $type: "typography",
     $value: value,
     $extensions: {
-      handoff: { originalId: style.id, source: "figma", tier: "primitive" },
+      handoff: {
+        originalId: style.id,
+        name: style.name,
+        source: "figma",
+        tier: "primitive",
+      },
     },
   };
 }
@@ -441,7 +454,12 @@ function buildShadowToken(
     $type: "shadow",
     $value: shadows.length === 1 ? shadows[0] : shadows,
     $extensions: {
-      handoff: { originalId: style.id, source: "figma", tier: "primitive" },
+      handoff: {
+        originalId: style.id,
+        name: style.name,
+        source: "figma",
+        tier: "primitive",
+      },
     },
   };
 }
@@ -493,13 +511,7 @@ export function buildDtcgSourceFromFigmaSnapshot(
   for (const style of styles.paint ?? []) {
     const segments = pathSegments(style.name);
     if (segments.length === 0) continue;
-    const token: DtcgToken = {
-      $type: "color",
-      $value: firstPaintColor(style.paints),
-      $extensions: {
-        handoff: { originalId: style.id, source: "figma", tier: "primitive" },
-      },
-    };
+    const token = buildPaintToken(style);
     if (style.description) token.$description = style.description;
     placeToken(tokens, segments, token, diagnostics, style.id);
   }
@@ -531,16 +543,30 @@ export function buildDtcgSourceFromFigmaSnapshot(
   return { source: { schemaVersion: 1, axes, tokens }, diagnostics };
 }
 
-/** First solid paint as a CSS color, else `"transparent"`. */
-function firstPaintColor(paints: Paint[]): string {
-  const solid = paints.find((p) => p.type === "SOLID" && p.color);
-  if (solid && solid.color) {
-    return transformFigmaColorToCssColor({
-      r: solid.color.r,
-      g: solid.color.g,
-      b: solid.color.b,
-      a: solid.color.a * (solid.opacity ?? 1),
-    });
-  }
-  return "transparent";
+/**
+ * A paint style's fills as one CSS color value, plus its blend modes.
+ *
+ * Delegates to {@link transformFigmaFillsToCssColor} — the same converter the
+ * legacy/CLI token path uses — rather than reading the fills here. The previous
+ * local helper took the first `SOLID` paint and returned the literal
+ * `"transparent"` for everything else, so every gradient style flattened to
+ * `transparent`. The shared converter emits real `linear-gradient()` /
+ * `radial-gradient()` values, reverses layer order (Figma paints are
+ * bottom-first, CSS layers are top-first) and keeps multi-layer fills whole.
+ */
+function buildPaintToken(style: FigmaPaintStyle): DtcgToken {
+  const { color, blend } = transformFigmaFillsToCssColor(style.paints ?? []);
+  const meta: HandoffTokenMeta = {
+    originalId: style.id,
+    name: style.name,
+    source: "figma",
+    tier: "primitive",
+  };
+  // `normal` is the CSS initial value; omitting it matches the CLI token path.
+  if (blend && blend !== "normal") meta.blend = blend;
+  return {
+    $type: "color",
+    $value: color,
+    $extensions: { handoff: meta },
+  };
 }

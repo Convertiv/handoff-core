@@ -35,9 +35,28 @@ export type DtcgSyncState = "in-sync" | "added" | "modified" | "removed";
 export interface HandoffTokenMeta {
   /** Figma variable/style id — the idempotency key for diff/commit. */
   originalId?: string;
+  /**
+   * The token's **human** name, verbatim from its source (`"Color/SS&C Blue/500"`).
+   *
+   * DTCG path segments are slugified, which is lossy and irreversible: `SS&C Blue`
+   * becomes `ss-c-blue` and the `&` cannot be recovered from it. The display layer
+   * therefore cannot re-derive a label from the key — the human name has to travel
+   * with the token. Kept slash-delimited (not flattened to spaces) so a consumer can
+   * line the segments up with the DTCG path and take the name of any group along it.
+   *
+   * `$description` is deliberately *not* used for this: it already carries genuine
+   * Figma description text on the tokens that have one.
+   */
+  name?: string;
   syncState?: DtcgSyncState;
   source?: "figma" | "css" | "manual";
   tier?: "primitive" | "shared" | "semantic" | "brand";
+  /**
+   * CSS `background-blend-mode` for a multi-layer fill, one mode per layer of
+   * `$value`. Omitted when every layer is `normal` (the CSS initial value), which
+   * matches what the CLI token path records.
+   */
+  blend?: string;
   /** Figma scopes, carried for audit and to trace type/unit inference. */
   scopes?: string[];
   /**
