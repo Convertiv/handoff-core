@@ -1,5 +1,9 @@
 import * as FigmaTypes from "./figma";
 
+// Reference-preserving multi-axis DTCG model + Figma snapshot contract (P1).
+export * from "./dtcg";
+export * from "./figma-snapshot";
+
 export interface IColorObject {
   id: string;
   name: string;

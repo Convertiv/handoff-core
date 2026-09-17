@@ -41,6 +41,7 @@ jspm_packages/
 
 # TypeScript compiled output
 dist/
+dist-test/
 build/
 
 # dotenv environment variable files
